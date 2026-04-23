@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "id": 81,
+    "title": "Code Language Classification",
+    "title_ko": "코드 언어 분류",
+    "category": "nlp",
+    "difficulty": "intermediate",
+    "description": "Classify source code snippets by programming language using Conv1D and GlobalAveragePooling for efficient text pattern extraction.",
+    "description_ko": "Conv1D와 GlobalAveragePooling을 사용하여 소스 코드 스니펫의 프로그래밍 언어를 분류합니다.",
+    "tags": [
+      "nlp",
+      "code-classification",
+      "conv1d",
+      "embedding",
+      "multi-class"
+    ],
+    "estimated_time": "15min",
+    "dataset_info": {
+      "name": "Code Snippets Dataset",
+      "source": "github-code-snippets",
+      "samples": 25000,
+      "features": "text (source code snippets)",
+      "target": "language (0: Python, 1: JavaScript, 2: Java, 3: C++, 4: Ruby, 5: Go, 6: Rust, 7: PHP)"
+    },
+    "learning_objectives": [
+      "Conv1D가 텍스트의 로컬 패턴(n-gram)을 추출하는 원리를 이해한다",
+      "GlobalAveragePooling이 가변 길이 시퀀스를 고정 크기 벡터로 변환하는 방법을 학습한다",
+      "CNN 기반 텍스트 분류와 RNN 기반 분류의 장단점을 비교한다",
+      "코드 텍스트의 특성(키워드, 구문)을 활용한 분류 전략을 이해한다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "csv_loader_01",
+        "text": "코드 스니펫 데이터셋을 로드합니다. 소스 코드와 프로그래밍 언어 레이블을 포함합니다."
+      },
+      {
+        "step": 2,
+        "node": "Embedding",
+        "text": "10000개 어휘(코드 토큰)를 64차원 벡터로 변환합니다. max_length=300으로 설정합니다."
+      },
+      {
+        "step": 3,
+        "node": "Conv1D",
+        "text": "128개 필터와 커널 크기 5의 Conv1D로 로컬 코드 패턴을 추출합니다."
+      },
+      {
+        "step": 4,
+        "node": "GlobalAveragePooling1D",
+        "text": "시퀀스 차원을 평균 풀링하여 고정 크기 벡터로 변환합니다."
+      },
+      {
+        "step": 5,
+        "node": "Dense",
+        "text": "8개 유닛과 소프트맥스로 프로그래밍 언어를 분류합니다."
+      },
+      {
+        "step": 6,
+        "node": "Trainer",
+        "text": "sparse_categorical_crossentropy로 15 에폭 학습합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "csv_loader_01",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/code_snippets.csv",
+        "text_column": "code",
+        "label_column": "language",
+        "tokenize": true,
+        "max_vocab": 10000,
+        "max_length": 300,
+        "target_column": ""
+      }
+    },
+    {
+      "id": "embedding_01",
+      "type": "Embedding",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "vocab_size": 10000,
+        "embedding_dim": 64,
+        "max_length": 300
+      }
+    },
+    {
+      "id": "conv1d_01",
+      "type": "Conv1D",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "filters": 128,
+        "kernel_size": 5,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "gap_01",
+      "type": "GlobalAveragePooling1D",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "dense_01",
+      "type": "Dense",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "units": 8,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "trainer_01",
+      "type": "Trainer",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "epochs": 15,
+        "batch_size": 64,
+        "optimizer": "adam",
+        "learning_rate": 0.001,
+        "loss": "sparse_categorical_crossentropy",
+        "metrics": [
+          "accuracy"
+        ],
+        "validation_split": 0.2,
+        "device": "auto"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "embedding_01",
+      "target": "conv1d_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "conv1d_01",
+      "target": "gap_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "gap_01",
+      "target": "dense_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "dense_01",
+      "target": "trainer_01",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "dataset",
+      "target": "embedding_01",
+      "targetHandle": "input",
+      "id": "restore_csv_loader_01_embedding_01"
+    }
+  ]
+}

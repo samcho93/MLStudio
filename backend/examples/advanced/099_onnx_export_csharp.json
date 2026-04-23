@@ -1,0 +1,414 @@
+{
+  "meta": {
+    "id": 99,
+    "title": "ONNX Export + C# Inference",
+    "title_ko": "ONNX 내보내기 + C# 추론",
+    "category": "advanced",
+    "difficulty": "advanced",
+    "description": "Train a model, export it to ONNX format, validate the exported model, and generate C# inference code for OnnxRuntime integration.",
+    "description_ko": "모델을 학습하고 ONNX 포맷으로 내보낸 후, 내보낸 모델을 검증하고 C# OnnxRuntime 연동 추론 코드를 생성합니다.",
+    "tags": [
+      "onnx",
+      "export",
+      "csharp",
+      "onnxruntime",
+      "deployment",
+      "inference"
+    ],
+    "estimated_time": "15분",
+    "dataset_info": {
+      "name": "MNIST",
+      "source": "tf.keras.datasets",
+      "samples": 70000,
+      "features": "28x28x1",
+      "classes": 10
+    },
+    "learning_objectives": [
+      "ONNX 포맷의 개념과 크로스 프레임워크 호환성을 이해한다",
+      "TensorFlow/PyTorch 모델을 ONNX로 변환하는 과정을 배운다",
+      "내보낸 ONNX 모델의 입출력 스펙을 검증하는 방법을 익힌다",
+      "C# OnnxRuntime으로 추론 코드를 생성하고 연동하는 방법을 학습한다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "NumpyInput_1",
+        "text": "MNIST 데이터셋을 로드합니다."
+      },
+      {
+        "step": 2,
+        "node": "Conv2D_1",
+        "text": "간단한 CNN 모델을 구성합니다. ONNX 변환 호환성이 높은 레이어만 사용합니다."
+      },
+      {
+        "step": 3,
+        "node": "Trainer_1",
+        "text": "모델을 학습합니다."
+      },
+      {
+        "step": 4,
+        "node": "ModelSave_1",
+        "text": "학습된 모델을 원본 포맷(.keras/.pth)으로 저장합니다."
+      },
+      {
+        "step": 5,
+        "node": "ONNXExport_1",
+        "text": "ONNX 포맷으로 변환합니다. 입력 shape과 opset 버전을 확인합니다."
+      },
+      {
+        "step": 6,
+        "node": "ModelSummary_1",
+        "text": "ONNX 모델의 입출력 텐서 이름, shape, dtype을 확인합니다. C# 코드에서 이 정보가 필요합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "NumpyInput_1",
+      "type": "NumpyInput",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "dataset": "mnist"
+      }
+    },
+    {
+      "id": "Conv2D_1",
+      "type": "Conv2D",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "filters": 32,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "valid"
+      }
+    },
+    {
+      "id": "MaxPooling2D_1",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Conv2D_2",
+      "type": "Conv2D",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "filters": 64,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "valid"
+      }
+    },
+    {
+      "id": "MaxPooling2D_2",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Flatten_1",
+      "type": "Flatten",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_1",
+      "type": "Dropout",
+      "position": {
+        "x": 2010,
+        "y": 80
+      },
+      "params": {
+        "rate": 0.5
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 2290,
+        "y": 80
+      },
+      "params": {
+        "units": 10,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 2570,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 2570,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 2570,
+        "y": 80
+      },
+      "params": {
+        "epochs": 10,
+        "batch_size": 64,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "ClassificationMetrics_1",
+      "type": "ClassificationMetrics",
+      "position": {
+        "x": 2850,
+        "y": 80
+      },
+      "params": {
+        "metrics": [
+          "accuracy",
+          "precision",
+          "recall",
+          "f1"
+        ]
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 2850,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "ModelSave_1",
+      "type": "ModelSave",
+      "position": {
+        "x": 2850,
+        "y": 764
+      },
+      "params": {
+        "format": "keras",
+        "filepath": "outputs/mnist_cnn.keras"
+      }
+    },
+    {
+      "id": "ONNXExport_1",
+      "type": "ONNXExport",
+      "position": {
+        "x": 3130,
+        "y": 80
+      },
+      "params": {
+        "filepath": "outputs/mnist_cnn.onnx",
+        "opset_version": 13,
+        "input_names": [
+          "input_image"
+        ],
+        "output_names": [
+          "class_probabilities"
+        ],
+        "dynamic_axes": {
+          "input_image": {
+            "0": "batch_size"
+          },
+          "class_probabilities": {
+            "0": "batch_size"
+          }
+        },
+        "validate": true,
+        "generate_csharp_code": true,
+        "csharp_output_path": "outputs/MnistInference.cs"
+      }
+    },
+    {
+      "id": "ModelSummary_1",
+      "type": "ModelSummary",
+      "position": {
+        "x": 2850,
+        "y": 80
+      },
+      "params": {
+        "show_onnx_info": true
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "NumpyInput_1",
+      "target": "Conv2D_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_1",
+      "target": "MaxPooling2D_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_1",
+      "target": "Conv2D_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_2",
+      "target": "MaxPooling2D_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_2",
+      "target": "Flatten_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Flatten_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dropout_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "NumpyInput_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "NumpyInput_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "NumpyInput_1",
+      "target": "Trainer_1",
+      "sourceHandle": "test_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "NumpyInput_1",
+      "target": "Trainer_1",
+      "sourceHandle": "test_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "ClassificationMetrics_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "ModelSave_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "ModelSave_1",
+      "target": "ONNXExport_1",
+      "sourceHandle": "model_path",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "ONNXExport_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "ONNXExport_1",
+      "target": "ModelSummary_1",
+      "sourceHandle": "onnx_path",
+      "targetHandle": "model"
+    }
+  ]
+}

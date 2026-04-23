@@ -1,0 +1,422 @@
+{
+  "meta": {
+    "id": 16,
+    "title": "Facial Expression Classification",
+    "title_ko": "얼굴 표정 분류",
+    "category": "classification",
+    "difficulty": "intermediate",
+    "description": "Classify facial expressions (happy, sad, angry, etc.) using a 4-layer CNN pipeline.",
+    "description_ko": "4개의 Conv2D 레이어로 얼굴 표정을 분류합니다. 깊은 CNN 설계와 MaxPooling 활용법을 배웁니다.",
+    "tags": [
+      "image",
+      "face",
+      "expression",
+      "cnn",
+      "classification"
+    ],
+    "estimated_time": "15분",
+    "dataset_info": {
+      "name": "FER-2013",
+      "source": "Kaggle / custom folder",
+      "samples": 35887,
+      "features": "48x48x1",
+      "classes": 7
+    },
+    "learning_objectives": [
+      "깊은 CNN(4층) 구조의 설계 원리",
+      "각 Conv2D 레이어에서 필터 수를 점진적으로 늘리는 이유",
+      "MaxPooling2D로 공간 차원을 줄이는 효과",
+      "Flatten으로 다차원 텐서를 1D로 변환",
+      "7종 표정(행복, 슬픔, 분노 등) 다중 분류"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "ImageFolder_1",
+        "text": "얼굴 표정 이미지를 로드합니다. 7개 하위 폴더(angry, happy, sad 등)에서 자동 레이블링됩니다."
+      },
+      {
+        "step": 2,
+        "node": "TrainValSplit_1",
+        "text": "학습(80%)과 검증(20%)으로 분할합니다."
+      },
+      {
+        "step": 3,
+        "node": "Conv2D_1",
+        "text": "32개 필터: 얼굴의 기본 특징(가장자리, 윤곽)을 추출합니다."
+      },
+      {
+        "step": 4,
+        "node": "Conv2D_2",
+        "text": "64개 필터: 눈, 코, 입 등 중간 수준 특징을 학습합니다."
+      },
+      {
+        "step": 5,
+        "node": "Conv2D_3",
+        "text": "128개 필터: 표정 패턴(미소, 찡그림)을 감지합니다."
+      },
+      {
+        "step": 6,
+        "node": "Conv2D_4",
+        "text": "256개 필터: 고수준 표정 특징을 추출합니다."
+      },
+      {
+        "step": 7,
+        "node": "Dense_2",
+        "text": "7개 뉴런 + softmax: 7종 표정의 확률을 출력합니다."
+      },
+      {
+        "step": 8,
+        "node": "Trainer_1",
+        "text": "얼굴 표정 인식은 어려운 태스크입니다. 20 에포크 후 약 60%+ 정확도를 기대할 수 있습니다."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "ImageFolder_1",
+      "type": "ImageFolder",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "folder_path": "datasets/fer2013",
+        "image_size": [
+          48,
+          48
+        ],
+        "color_mode": "grayscale"
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "test_ratio": 0.0,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Conv2D_1",
+      "type": "Conv2D",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "filters": 32,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "MaxPooling2D_1",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Conv2D_2",
+      "type": "Conv2D",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "filters": 64,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "MaxPooling2D_2",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Conv2D_3",
+      "type": "Conv2D",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "filters": 128,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "MaxPooling2D_3",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Conv2D_4",
+      "type": "Conv2D",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {
+        "filters": 256,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "Flatten_1",
+      "type": "Flatten",
+      "position": {
+        "x": 2010,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "Dropout_1",
+      "type": "Dropout",
+      "position": {
+        "x": 2290,
+        "y": 80
+      },
+      "params": {
+        "rate": 0.5
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 2570,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 2850,
+        "y": 80
+      },
+      "params": {
+        "units": 7,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 3130,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 3130,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 3130,
+        "y": 80
+      },
+      "params": {
+        "epochs": 20,
+        "batch_size": 64,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 3410,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "AccuracyCurve_1",
+      "type": "AccuracyCurve",
+      "position": {
+        "x": 3410,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Conv2D_1",
+      "target": "MaxPooling2D_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_1",
+      "target": "Conv2D_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_2",
+      "target": "MaxPooling2D_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_2",
+      "target": "Conv2D_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_3",
+      "target": "MaxPooling2D_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_3",
+      "target": "Conv2D_4",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_4",
+      "target": "Flatten_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Flatten_1",
+      "target": "Dropout_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "AccuracyCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "meta": {
+    "id": 76,
+    "title": "Named Entity Recognition (NER)",
+    "title_ko": "개체명 인식 (NER)",
+    "category": "nlp",
+    "difficulty": "advanced",
+    "description": "Identify and classify named entities (person, organization, location, etc.) in text using a Bidirectional LSTM model.",
+    "description_ko": "양방향 LSTM 모델을 사용하여 텍스트에서 개체명(인물, 기관, 장소 등)을 식별하고 분류합니다.",
+    "tags": [
+      "nlp",
+      "ner",
+      "sequence-labeling",
+      "bidirectional-lstm",
+      "embedding"
+    ],
+    "estimated_time": "25min",
+    "dataset_info": {
+      "name": "CoNLL-2003 NER Dataset",
+      "source": "conll2003",
+      "samples": 22000,
+      "features": "text (tokenized sentences)",
+      "target": "entity_tags (O, B-PER, I-PER, B-ORG, I-ORG, B-LOC, I-LOC, B-MISC, I-MISC)"
+    },
+    "learning_objectives": [
+      "시퀀스 레이블링 태스크의 특성과 일반 분류와의 차이를 이해한다",
+      "양방향 LSTM이 문맥의 앞뒤 정보를 모두 활용하는 원리를 학습한다",
+      "return_sequences=true를 사용하여 토큰별 출력을 생성하는 방법을 익힌다",
+      "BIO 태깅 체계의 개념과 개체명 인식에서의 활용법을 이해한다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "csv_loader_01",
+        "text": "CoNLL-2003 형식의 NER 데이터를 로드합니다. 각 토큰과 개체명 태그가 포함됩니다."
+      },
+      {
+        "step": 2,
+        "node": "Embedding",
+        "text": "15000개 어휘를 64차원 벡터로 변환합니다. 문장 최대 길이를 150으로 설정합니다."
+      },
+      {
+        "step": 3,
+        "node": "Bidirectional LSTM",
+        "text": "128 유닛의 양방향 LSTM으로 각 토큰의 양방향 문맥을 인코딩합니다. return_sequences=true로 설정합니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense",
+        "text": "9개 유닛(개체명 태그 수)과 소프트맥스로 각 토큰의 태그를 예측합니다."
+      },
+      {
+        "step": 5,
+        "node": "Trainer",
+        "text": "sparse_categorical_crossentropy로 20 에폭 학습합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "csv_loader_01",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/conll2003_ner.csv",
+        "text_column": "tokens",
+        "label_column": "ner_tags",
+        "tokenize": true,
+        "max_vocab": 15000,
+        "max_length": 150,
+        "sequence_labeling": true,
+        "target_column": ""
+      }
+    },
+    {
+      "id": "embedding_01",
+      "type": "Embedding",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "vocab_size": 15000,
+        "embedding_dim": 64,
+        "max_length": 150
+      }
+    },
+    {
+      "id": "bilstm_01",
+      "type": "Bidirectional LSTM",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "dense_01",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 9,
+        "activation": "softmax",
+        "time_distributed": true
+      }
+    },
+    {
+      "id": "trainer_01",
+      "type": "Trainer",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "epochs": 20,
+        "batch_size": 32,
+        "optimizer": "adam",
+        "learning_rate": 0.001,
+        "loss": "sparse_categorical_crossentropy",
+        "metrics": [
+          "accuracy"
+        ],
+        "validation_split": 0.15,
+        "device": "auto"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "embedding_01",
+      "target": "bilstm_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "bilstm_01",
+      "target": "dense_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "dense_01",
+      "target": "trainer_01",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "dataset",
+      "target": "embedding_01",
+      "targetHandle": "input",
+      "id": "restore_csv_loader_01_embedding_01"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "features",
+      "target": "trainer_01",
+      "targetHandle": "train_features",
+      "id": "fix_data_76"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "labels",
+      "target": "trainer_01",
+      "targetHandle": "train_labels",
+      "id": "fix_labels_76"
+    }
+  ]
+}

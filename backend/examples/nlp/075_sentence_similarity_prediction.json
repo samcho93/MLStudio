@@ -1,0 +1,252 @@
+{
+  "meta": {
+    "id": 75,
+    "title": "Sentence Similarity Prediction",
+    "title_ko": "문장 유사도 예측",
+    "category": "nlp",
+    "difficulty": "advanced",
+    "description": "Predict semantic similarity between two sentences using dual Embedding paths, LSTM encoding, and an Add merge layer.",
+    "description_ko": "이중 임베딩 경로와 LSTM 인코딩, Add 병합 레이어를 사용하여 두 문장 간의 의미적 유사도를 예측합니다.",
+    "tags": [
+      "nlp",
+      "sentence-similarity",
+      "siamese",
+      "lstm",
+      "merge",
+      "embedding"
+    ],
+    "estimated_time": "25min",
+    "dataset_info": {
+      "name": "STS Benchmark",
+      "source": "sts-benchmark",
+      "samples": 17000,
+      "features": "text pairs (sentence_a, sentence_b)",
+      "target": "similarity_class (0: dissimilar, 1: neutral, 2: similar)"
+    },
+    "learning_objectives": [
+      "Siamese 네트워크 구조의 개념과 공유 가중치의 장점을 이해한다",
+      "두 입력을 병렬로 처리하고 Add 레이어로 병합하는 방법을 학습한다",
+      "문장 임베딩을 비교하는 다양한 방법(Add, Concat, 코사인 유사도)을 비교한다",
+      "다중 입력 파이프라인 구성 방법을 익힌다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "csv_loader_01",
+        "text": "문장 쌍 데이터셋을 로드합니다. 두 문장과 유사도 레이블을 포함합니다."
+      },
+      {
+        "step": 2,
+        "node": "Embedding (A)",
+        "text": "첫 번째 문장을 10000개 어휘, 64차원 임베딩으로 변환합니다."
+      },
+      {
+        "step": 3,
+        "node": "Embedding (B)",
+        "text": "두 번째 문장을 동일한 설정의 임베딩으로 변환합니다."
+      },
+      {
+        "step": 4,
+        "node": "LSTM",
+        "text": "두 임베딩 경로를 각각 64 유닛 LSTM으로 인코딩합니다."
+      },
+      {
+        "step": 5,
+        "node": "Add",
+        "text": "두 LSTM 출력을 Add 레이어로 병합합니다."
+      },
+      {
+        "step": 6,
+        "node": "Dense",
+        "text": "3개 유닛과 소프트맥스로 유사도 등급을 분류합니다."
+      },
+      {
+        "step": 7,
+        "node": "Trainer",
+        "text": "sparse_categorical_crossentropy로 20 에폭 학습합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "csv_loader_01",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/sts_benchmark.csv",
+        "text_column": [
+          "sentence_a",
+          "sentence_b"
+        ],
+        "label_column": "similarity_class",
+        "tokenize": true,
+        "max_vocab": 10000,
+        "max_length": 100,
+        "target_column": ""
+      }
+    },
+    {
+      "id": "embedding_01",
+      "type": "Embedding",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "vocab_size": 10000,
+        "embedding_dim": 64,
+        "max_length": 100,
+        "input_key": "sentence_a"
+      }
+    },
+    {
+      "id": "embedding_02",
+      "type": "Embedding",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "vocab_size": 10000,
+        "embedding_dim": 64,
+        "max_length": 100,
+        "input_key": "sentence_b"
+      }
+    },
+    {
+      "id": "lstm_01",
+      "type": "LSTM",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "units": 64,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "lstm_02",
+      "type": "LSTM",
+      "position": {
+        "x": 610,
+        "y": 422
+      },
+      "params": {
+        "units": 64,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "add_01",
+      "type": "Add",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "dense_01",
+      "type": "Dense",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "units": 3,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "trainer_01",
+      "type": "Trainer",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "epochs": 20,
+        "batch_size": 32,
+        "optimizer": "adam",
+        "learning_rate": 0.001,
+        "loss": "sparse_categorical_crossentropy",
+        "metrics": [
+          "accuracy"
+        ],
+        "validation_split": 0.2,
+        "device": "auto"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "embedding_01",
+      "target": "lstm_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "embedding_02",
+      "target": "lstm_02",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "lstm_01",
+      "target": "add_01",
+      "sourceHandle": "output",
+      "targetHandle": "input_a"
+    },
+    {
+      "source": "lstm_02",
+      "target": "add_01",
+      "sourceHandle": "output",
+      "targetHandle": "input_b"
+    },
+    {
+      "source": "add_01",
+      "target": "dense_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "dense_01",
+      "target": "trainer_01",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "dataset",
+      "target": "embedding_01",
+      "targetHandle": "input",
+      "id": "restore_csv_loader_01_embedding_01"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "dataset",
+      "target": "embedding_02",
+      "targetHandle": "input",
+      "id": "restore_csv_loader_01_embedding_02"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "features",
+      "target": "trainer_01",
+      "targetHandle": "train_features",
+      "id": "fix_data_75"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "labels",
+      "target": "trainer_01",
+      "targetHandle": "train_labels",
+      "id": "fix_labels_75"
+    }
+  ]
+}

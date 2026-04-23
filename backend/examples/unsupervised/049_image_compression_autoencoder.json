@@ -1,0 +1,297 @@
+{
+  "meta": {
+    "id": 49,
+    "title": "Image Compression (Autoencoder)",
+    "title_ko": "이미지 압축 (Autoencoder)",
+    "category": "unsupervised",
+    "difficulty": "intermediate",
+    "description": "Compress and reconstruct images using a convolutional autoencoder with Conv2D encoder and Conv2DTranspose decoder layers.",
+    "description_ko": "Conv2D 인코더와 Conv2DTranspose 디코더로 이미지를 압축하고 복원하는 합성곱 오토인코더입니다. 이미지 압축의 원리를 시각적으로 이해합니다.",
+    "tags": [
+      "image",
+      "unsupervised",
+      "autoencoder",
+      "convolutional",
+      "compression",
+      "intermediate"
+    ],
+    "estimated_time": "5~8분",
+    "dataset_info": {
+      "name": "MNIST / Fashion-MNIST",
+      "source": "keras built-in",
+      "samples": 60000,
+      "features": "28x28x1",
+      "classes": null
+    },
+    "learning_objectives": [
+      "합성곱 오토인코더(Convolutional Autoencoder)의 구조 이해",
+      "Conv2D로 이미지 특징을 인코딩하는 원리",
+      "Conv2DTranspose(전치 합성곱)로 이미지를 복원하는 방법",
+      "bottleneck 크기가 압축 품질에 미치는 영향",
+      "MSE 손실로 원본과 복원 이미지의 차이를 측정하는 방법"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "NumpyInput_1",
+        "text": "MNIST 이미지 데이터를 로드합니다. 28x28 그레이스케일 이미지 60,000장입니다."
+      },
+      {
+        "step": 2,
+        "node": "TrainValSplit_1",
+        "text": "학습(80%)과 검증(20%)으로 분할합니다."
+      },
+      {
+        "step": 3,
+        "node": "Conv2D_Enc1",
+        "text": "인코더 1층: 32개 필터로 이미지의 저수준 특징(에지, 텍스처)을 추출합니다."
+      },
+      {
+        "step": 4,
+        "node": "Conv2D_Enc2",
+        "text": "인코더 2층: 16개 필터로 더 추상적인 특징을 압축합니다. 공간 크기가 줄어듭니다."
+      },
+      {
+        "step": 5,
+        "node": "Conv2DTranspose_Dec1",
+        "text": "디코더 1층: 전치 합성곱으로 공간 크기를 키우며 복원을 시작합니다."
+      },
+      {
+        "step": 6,
+        "node": "Conv2DTranspose_Dec2",
+        "text": "디코더 출력층: 원본 크기(28x28x1)로 이미지를 복원합니다. sigmoid로 픽셀값을 0~1로 제한합니다."
+      },
+      {
+        "step": 7,
+        "node": "Trainer_1",
+        "text": "학습을 실행합니다. 입력 이미지와 복원 이미지의 차이(MSE)를 최소화합니다."
+      },
+      {
+        "step": 8,
+        "node": "LossCurve_1",
+        "text": "Loss 곡선을 확인합니다. 낮은 Loss는 원본에 가까운 복원을 의미합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "NumpyInput_1",
+      "type": "NumpyInput",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "dataset": "mnist",
+        "normalize": true,
+        "reshape": [
+          28,
+          28,
+          1
+        ]
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "test_ratio": 0.0,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Conv2D_Enc1",
+      "type": "Conv2D",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "filters": 32,
+        "kernel_size": 3,
+        "strides": 2,
+        "padding": "same",
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Conv2D_Enc2",
+      "type": "Conv2D",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "filters": 16,
+        "kernel_size": 3,
+        "strides": 2,
+        "padding": "same",
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Conv2DTranspose_Dec1",
+      "type": "Conv2DTranspose",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "filters": 32,
+        "kernel_size": 3,
+        "strides": 2,
+        "padding": "same",
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Conv2DTranspose_Dec2",
+      "type": "Conv2DTranspose",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "filters": 1,
+        "kernel_size": 3,
+        "strides": 2,
+        "padding": "same",
+        "activation": "sigmoid"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 1170,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 1170,
+        "y": 764
+      },
+      "params": {
+        "type": "mse"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "epochs": 20,
+        "batch_size": 64,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "NumpyInput_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "Conv2D_Enc1",
+      "target": "Conv2D_Enc2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_Enc2",
+      "target": "Conv2DTranspose_Dec1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2DTranspose_Dec1",
+      "target": "Conv2DTranspose_Dec2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2DTranspose_Dec2",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "NumpyInput_1",
+      "sourceHandle": "train_labels",
+      "target": "TrainValSplit_1",
+      "targetHandle": "labels",
+      "id": "auto_nplabel_NumpyInput_1_TrainValSplit_1"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "train_labels",
+      "target": "Trainer_1",
+      "targetHandle": "train_labels",
+      "id": "auto_label_TrainValSplit_1_Trainer_1"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "val_labels",
+      "target": "Trainer_1",
+      "targetHandle": "val_labels",
+      "id": "auto_vlabel_TrainValSplit_1_Trainer_1"
+    }
+  ]
+}

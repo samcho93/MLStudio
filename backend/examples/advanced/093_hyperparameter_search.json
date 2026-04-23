@@ -1,0 +1,391 @@
+{
+  "meta": {
+    "id": 93,
+    "title": "Hyperparameter Search",
+    "title_ko": "하이퍼파라미터 탐색",
+    "category": "advanced",
+    "difficulty": "advanced",
+    "description": "Perform grid search over learning rates and hidden layer sizes to find optimal hyperparameters for a Dense network on tabular data.",
+    "description_ko": "학습률과 은닉층 크기에 대한 그리드 탐색을 수행하여 Dense 네트워크의 최적 하이퍼파라미터를 찾습니다.",
+    "tags": [
+      "hyperparameter-tuning",
+      "grid-search",
+      "optimization",
+      "tabular",
+      "classification"
+    ],
+    "estimated_time": "30분",
+    "dataset_info": {
+      "name": "Wine Quality",
+      "source": "UCI ML Repository",
+      "samples": 4898,
+      "features": 11,
+      "classes": 7
+    },
+    "learning_objectives": [
+      "그리드 서치를 통한 하이퍼파라미터 최적화 방법을 이해한다",
+      "학습률이 모델 수렴에 미치는 영향을 분석한다",
+      "은닉층 크기와 모델 용량의 관계를 파악한다",
+      "Early Stopping을 활용한 효율적인 탐색 전략을 배운다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "와인 품질 데이터셋을 로드합니다."
+      },
+      {
+        "step": 2,
+        "node": "StandardScaler_1",
+        "text": "모든 특성을 Z-score 정규화합니다. 하이퍼파라미터 비교의 공정성을 위해 필수입니다."
+      },
+      {
+        "step": 3,
+        "node": "TrainValSplit_1",
+        "text": "학습/검증/테스트를 7:1.5:1.5로 분리합니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense_1",
+        "text": "은닉층 크기를 파라미터로 설정합니다. Grid Search에서 [64, 128, 256]을 탐색합니다."
+      },
+      {
+        "step": 5,
+        "node": "Trainer_1",
+        "text": "Grid Search 모드를 활성화합니다. 학습률 [0.01, 0.001, 0.0001]과 은닉층 크기를 조합하여 총 9개 실험을 실행합니다."
+      },
+      {
+        "step": 6,
+        "node": "EarlyStopping_1",
+        "text": "각 실험에 Early Stopping을 적용하여 불필요한 학습을 방지합니다."
+      },
+      {
+        "step": 7,
+        "node": "ClassificationMetrics_1",
+        "text": "최적 하이퍼파라미터 조합의 최종 성능을 확인합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/wine_quality.csv",
+        "target_column": "quality"
+      }
+    },
+    {
+      "id": "StandardScaler_1",
+      "type": "StandardScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "fit_on": "train"
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "train_ratio": 0.7,
+        "val_ratio": 0.15,
+        "test_ratio": 0.15,
+        "shuffle": true,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu",
+        "search_space": {
+          "units": [
+            64,
+            128,
+            256
+          ]
+        }
+      }
+    },
+    {
+      "id": "BatchNorm_1",
+      "type": "BatchNorm",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "Dropout_1",
+      "type": "Dropout",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "rate": 0.3
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_3",
+      "type": "Dense",
+      "position": {
+        "x": 2010,
+        "y": 80
+      },
+      "params": {
+        "units": 7,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 2290,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001,
+        "search_space": {
+          "learning_rate": [
+            0.01,
+            0.001,
+            0.0001
+          ]
+        }
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 2290,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "EarlyStopping_1",
+      "type": "EarlyStopping",
+      "position": {
+        "x": 2290,
+        "y": 1106
+      },
+      "params": {
+        "monitor": "val_loss",
+        "patience": 5,
+        "min_delta": 0.001,
+        "restore_best_weights": true
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 2290,
+        "y": 80
+      },
+      "params": {
+        "epochs": 50,
+        "batch_size": 32,
+        "framework": "pytorch",
+        "search_mode": "grid",
+        "search_metric": "val_accuracy",
+        "search_direction": "maximize"
+      }
+    },
+    {
+      "id": "ClassificationMetrics_1",
+      "type": "ClassificationMetrics",
+      "position": {
+        "x": 2570,
+        "y": 422
+      },
+      "params": {
+        "metrics": [
+          "accuracy",
+          "precision",
+          "recall",
+          "f1"
+        ]
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 2570,
+        "y": 764
+      },
+      "params": {
+        "show_all_runs": true
+      }
+    },
+    {
+      "id": "AccuracyCurve_1",
+      "type": "AccuracyCurve",
+      "position": {
+        "x": 2570,
+        "y": 80
+      },
+      "params": {
+        "show_all_runs": true
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "StandardScaler_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "output",
+      "targetHandle": "features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Dense_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "BatchNorm_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "BatchNorm_1",
+      "target": "Dropout_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Dense_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_3",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "EarlyStopping_1",
+      "target": "Trainer_1",
+      "sourceHandle": "callback_config",
+      "targetHandle": "callback_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "ClassificationMetrics_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "AccuracyCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "CSVLoader_1",
+      "sourceHandle": "labels",
+      "target": "TrainValSplit_1",
+      "targetHandle": "labels",
+      "id": "auto_csvlabel_CSVLoader_1_TrainValSplit_1"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "train_labels",
+      "target": "Trainer_1",
+      "targetHandle": "train_labels",
+      "id": "auto_label_TrainValSplit_1_Trainer_1"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "val_labels",
+      "target": "Trainer_1",
+      "targetHandle": "val_labels",
+      "id": "auto_vlabel_TrainValSplit_1_Trainer_1"
+    },
+    {
+      "source": "CSVLoader_1",
+      "sourceHandle": "dataset",
+      "target": "StandardScaler_1",
+      "targetHandle": "input",
+      "id": "restore_CSVLoader_1_StandardScaler_1"
+    }
+  ]
+}

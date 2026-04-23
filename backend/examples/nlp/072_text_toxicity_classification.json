@@ -1,0 +1,163 @@
+{
+  "meta": {
+    "id": 72,
+    "title": "Text Toxicity Classification",
+    "title_ko": "텍스트 독성 분류",
+    "category": "nlp",
+    "difficulty": "intermediate",
+    "description": "Classify text comments as toxic or non-toxic using a GRU-based model with word embeddings.",
+    "description_ko": "단어 임베딩과 GRU 기반 모델을 사용하여 텍스트 댓글의 독성 여부를 분류합니다.",
+    "tags": [
+      "nlp",
+      "toxicity-detection",
+      "gru",
+      "embedding",
+      "binary-classification"
+    ],
+    "estimated_time": "15min",
+    "dataset_info": {
+      "name": "Toxic Comments Dataset",
+      "source": "jigsaw-toxic-comment-classification",
+      "samples": 160000,
+      "features": "text (comment body)",
+      "target": "toxic (0: non-toxic, 1: toxic)"
+    },
+    "learning_objectives": [
+      "GRU와 LSTM의 차이점을 이해하고 적절한 상황에서 GRU를 선택한다",
+      "텍스트 전처리와 토큰화 과정을 학습한다",
+      "불균형 데이터에서의 분류 모델 학습 전략을 이해한다",
+      "임베딩 차원과 시퀀스 길이가 모델 성능에 미치는 영향을 파악한다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "csv_loader_01",
+        "text": "독성 댓글 데이터셋을 로드합니다. 텍스트 컬럼과 독성 레이블을 지정합니다."
+      },
+      {
+        "step": 2,
+        "node": "Embedding",
+        "text": "20000개 어휘를 64차원 벡터로 변환합니다. max_length=200으로 시퀀스 길이를 제한합니다."
+      },
+      {
+        "step": 3,
+        "node": "GRU",
+        "text": "64 유닛의 GRU로 텍스트의 순차적 패턴을 학습합니다. LSTM보다 빠른 학습이 가능합니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense",
+        "text": "시그모이드 출력으로 독성 확률을 예측합니다."
+      },
+      {
+        "step": 5,
+        "node": "Trainer",
+        "text": "binary_crossentropy로 15 에폭 학습합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "csv_loader_01",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/toxic_comments.csv",
+        "text_column": "comment_text",
+        "label_column": "toxic",
+        "tokenize": true,
+        "max_vocab": 20000,
+        "max_length": 200,
+        "target_column": ""
+      }
+    },
+    {
+      "id": "embedding_01",
+      "type": "Embedding",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "vocab_size": 20000,
+        "embedding_dim": 64,
+        "max_length": 200
+      }
+    },
+    {
+      "id": "gru_01",
+      "type": "GRU",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "units": 64,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "dense_01",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 1,
+        "activation": "sigmoid"
+      }
+    },
+    {
+      "id": "trainer_01",
+      "type": "Trainer",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "epochs": 15,
+        "batch_size": 64,
+        "optimizer": "adam",
+        "learning_rate": 0.001,
+        "loss": "binary_crossentropy",
+        "metrics": [
+          "accuracy"
+        ],
+        "validation_split": 0.2,
+        "device": "auto"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "embedding_01",
+      "target": "gru_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "gru_01",
+      "target": "dense_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "dense_01",
+      "target": "trainer_01",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "dataset",
+      "target": "embedding_01",
+      "targetHandle": "input",
+      "id": "restore_csv_loader_01_embedding_01"
+    }
+  ]
+}

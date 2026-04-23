@@ -1,0 +1,284 @@
+{
+  "meta": {
+    "id": 40,
+    "title": "Building Energy Efficiency Prediction",
+    "title_ko": "건물 에너지 효율 예측",
+    "category": "regression",
+    "difficulty": "intermediate",
+    "description": "Predict building heating/cooling loads using MinMaxScaler, a 3-layer dense network with dropout.",
+    "description_ko": "건물 형상 특성(면적, 높이, 유리 비율 등)으로 에너지 부하를 예측합니다. Dropout 정규화 포함.",
+    "tags": [
+      "tabular",
+      "regression",
+      "dense",
+      "dropout",
+      "energy"
+    ],
+    "estimated_time": "3분",
+    "dataset_info": {
+      "name": "Energy Efficiency",
+      "source": "UCI ML Repository",
+      "samples": 768,
+      "features": 8
+    },
+    "learning_objectives": [
+      "MinMaxScaler + Dense + Dropout 조합",
+      "건물 에너지 데이터 회귀",
+      "Dropout 위치 선택 (깊은 레이어 뒤)",
+      "소규모 데이터셋에서의 과적합 방지"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "건물 에너지 데이터: 상대 밀집도, 벽면적, 지붕면적, 유리면적 등 8개 특성."
+      },
+      {
+        "step": 2,
+        "node": "MinMaxScaler_1",
+        "text": "건물 특성값을 0~1로 정규화합니다."
+      },
+      {
+        "step": 3,
+        "node": "Dropout_1",
+        "text": "Dropout(0.2): 소규모 데이터에서 과적합을 방지합니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense_4",
+        "text": "출력: units=1, linear. 에너지 부하(kWh)를 예측합니다."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/energy_efficiency.csv",
+        "target_column": "heating_load"
+      }
+    },
+    {
+      "id": "MinMaxScaler_1",
+      "type": "MinMaxScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_1",
+      "type": "Dropout",
+      "position": {
+        "x": 610,
+        "y": 422
+      },
+      "params": {
+        "rate": 0.2
+      }
+    },
+    {
+      "id": "Dense_3",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 32,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_4",
+      "type": "Dense",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "units": 1,
+        "activation": "linear"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 1450,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 1450,
+        "y": 764
+      },
+      "params": {
+        "type": "mse"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "epochs": 100,
+        "batch_size": 32,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "MinMaxScaler_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MinMaxScaler_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "output",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Dropout_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_1",
+      "target": "Dense_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_3",
+      "target": "Dense_4",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_4",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

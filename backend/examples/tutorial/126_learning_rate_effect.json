@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "id": 126,
+    "title": "Learning Rate Effect",
+    "title_ko": "Learning Rate 변경 실험",
+    "category": "tutorial",
+    "difficulty": "beginner",
+    "description": "Experiment with different learning rates and observe the effect on training.",
+    "description_ko": "Learning Rate를 바꿔가며 학습 속도와 안정성의 차이를 관찰합니다.",
+    "tags": [
+      "learning-rate",
+      "실험",
+      "하이퍼파라미터"
+    ],
+    "estimated_time": "1~2분",
+    "learning_objectives": [
+      "높은 lr(0.1): 빠르지만 불안정, 발산 가능",
+      "적당한 lr(0.001): 안정적으로 수렴",
+      "낮은 lr(0.00001): 매우 느리게 학습",
+      "lr 변경 → Optimizer 노드에서 learning_rate 수정"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "Optimizer_1",
+        "text": "현재 lr=0.1 (높음). 학습이 불안정할 수 있습니다."
+      },
+      {
+        "step": 2,
+        "node": "Trainer_1",
+        "text": "학습을 실행합니다."
+      },
+      {
+        "step": 3,
+        "node": "LossCurve_1",
+        "text": "Loss가 진동하거나 발산하면 lr이 너무 높은 것입니다. 0.001로 바꿔 다시 실행해보세요."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/iris.csv",
+        "target_column": "species"
+      }
+    },
+    {
+      "id": "StandardScaler_1",
+      "type": "StandardScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 50,
+        "y": 480
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 330,
+        "y": 480
+      },
+      "params": {
+        "units": 3,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 610,
+        "y": 480
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.1
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 610,
+        "y": 880
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "epochs": 30,
+        "batch_size": 16,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "StandardScaler_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "StandardScaler_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "output",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

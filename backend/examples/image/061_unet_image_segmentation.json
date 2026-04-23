@@ -1,0 +1,323 @@
+{
+  "meta": {
+    "id": 61,
+    "title": "U-Net Image Segmentation",
+    "title_ko": "이미지 세그멘테이션 (U-Net)",
+    "category": "image",
+    "difficulty": "advanced",
+    "description": "Build a U-Net architecture with encoder-decoder structure and skip connections for pixel-wise image segmentation.",
+    "description_ko": "인코더-디코더 구조와 Skip Connection을 활용한 U-Net 아키텍처로 픽셀 단위 이미지 세그멘테이션을 수행합니다.",
+    "tags": [
+      "segmentation",
+      "u-net",
+      "encoder-decoder",
+      "skip-connection",
+      "conv2d-transpose"
+    ],
+    "estimated_time": "25분",
+    "dataset_info": {
+      "name": "Segmentation Dataset",
+      "source": "custom folder (images + masks)",
+      "samples": 2000,
+      "features": "128x128x3",
+      "classes": 2
+    },
+    "learning_objectives": [
+      "U-Net 아키텍처의 인코더-디코더 구조 이해",
+      "Skip Connection(Add)의 역할과 효과",
+      "Conv2DTranspose를 사용한 업샘플링",
+      "픽셀 단위 분류(세그멘테이션)의 개념",
+      "이진 세그멘테이션을 위한 손실 함수 선택"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "ImageFolder_1",
+        "text": "원본 이미지와 세그멘테이션 마스크를 로드합니다."
+      },
+      {
+        "step": 2,
+        "node": "Conv2D_1",
+        "text": "인코더 첫 번째 블록: 32개 필터로 저수준 특징을 추출합니다."
+      },
+      {
+        "step": 3,
+        "node": "Conv2D_2",
+        "text": "인코더 두 번째 블록: 64개 필터로 축소된 특징 맵을 생성합니다."
+      },
+      {
+        "step": 4,
+        "node": "Conv2DTranspose_1",
+        "text": "디코더: Conv2DTranspose로 특징 맵을 업샘플링하여 원본 크기로 복원합니다."
+      },
+      {
+        "step": 5,
+        "node": "Add_1",
+        "text": "Skip Connection: 인코더의 얕은 특징과 디코더의 업샘플링된 특징을 더해 세밀한 정보를 보존합니다."
+      },
+      {
+        "step": 6,
+        "node": "Conv2D_3",
+        "text": "최종 1x1 합성곱: 각 픽셀을 전경/배경으로 분류합니다."
+      },
+      {
+        "step": 7,
+        "node": "Trainer_1",
+        "text": "binary_crossentropy로 픽셀 단위 분류를 학습합니다."
+      }
+    ],
+    "requires_phase": 3
+  },
+  "nodes": [
+    {
+      "id": "ImageFolder_1",
+      "type": "ImageFolder",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "folder_path": "datasets/segmentation",
+        "image_size": [
+          128,
+          128
+        ],
+        "color_mode": "rgb",
+        "mask_folder": "masks"
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "test_ratio": 0.0,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Conv2D_1",
+      "type": "Conv2D",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "filters": 32,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "MaxPooling2D_1",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Conv2D_2",
+      "type": "Conv2D",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "filters": 64,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "Conv2DTranspose_1",
+      "type": "Conv2DTranspose",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "filters": 32,
+        "kernel_size": 2,
+        "strides": 2,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "Add_1",
+      "type": "Add",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "Conv2D_3",
+      "type": "Conv2D",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "filters": 1,
+        "kernel_size": 1,
+        "activation": "sigmoid",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 1730,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 1730,
+        "y": 764
+      },
+      "params": {
+        "type": "binary_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {
+        "epochs": 30,
+        "batch_size": 16,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 2010,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Conv2D_1",
+      "target": "MaxPooling2D_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_1",
+      "target": "Conv2D_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_2",
+      "target": "Conv2DTranspose_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2DTranspose_1",
+      "target": "Add_1",
+      "sourceHandle": "output",
+      "targetHandle": "input_a"
+    },
+    {
+      "source": "Conv2D_1",
+      "target": "Add_1",
+      "sourceHandle": "output",
+      "targetHandle": "input_b"
+    },
+    {
+      "source": "Add_1",
+      "target": "Conv2D_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_3",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

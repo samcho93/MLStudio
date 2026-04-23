@@ -1,0 +1,240 @@
+{
+  "meta": {
+    "id": 111,
+    "title": "Prevent Overfitting with Dropout",
+    "title_ko": "Dropout으로 과적합 방지",
+    "category": "tutorial",
+    "difficulty": "beginner",
+    "description": "Add Dropout layers between Dense layers to reduce overfitting.",
+    "description_ko": "Dense 레이어 사이에 Dropout을 추가하여 과적합을 줄입니다.",
+    "tags": [
+      "dropout",
+      "과적합",
+      "정규화"
+    ],
+    "estimated_time": "1분",
+    "learning_objectives": [
+      "Dropout 노드의 rate 파라미터 의미 (0.3 = 30% 뉴런 비활성화)",
+      "Dropout이 과적합을 방지하는 원리",
+      "Dropout은 레이어 사이에 삽입"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "Dense_1",
+        "text": "64개 뉴런의 은닉층입니다."
+      },
+      {
+        "step": 2,
+        "node": "Dropout_1",
+        "text": "30%의 뉴런을 랜덤으로 끕니다. 과적합을 방지합니다."
+      },
+      {
+        "step": 3,
+        "node": "Dense_2",
+        "text": "3개 출력층입니다."
+      },
+      {
+        "step": 4,
+        "node": "LossCurve_1",
+        "text": "Train/Val Loss 차이가 작아지면 Dropout이 효과적입니다."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/iris.csv",
+        "target_column": "species"
+      }
+    },
+    {
+      "id": "StandardScaler_1",
+      "type": "StandardScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 50,
+        "y": 480
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_1",
+      "type": "Dropout",
+      "position": {
+        "x": 330,
+        "y": 480
+      },
+      "params": {
+        "rate": 0.3
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 610,
+        "y": 480
+      },
+      "params": {
+        "units": 3,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 890,
+        "y": 480
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 890,
+        "y": 880
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "epochs": 50,
+        "batch_size": 16,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "StandardScaler_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "StandardScaler_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "output",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dropout_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

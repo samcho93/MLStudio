@@ -1,0 +1,287 @@
+{
+  "meta": {
+    "id": 56,
+    "title": "ResNet50 Transfer Learning Fine-Tuning",
+    "title_ko": "ResNet50 전이학습 파인튜닝",
+    "category": "image",
+    "difficulty": "intermediate",
+    "description": "Fine-tune a pretrained ResNet50 model with trainable backbone layers for custom image classification.",
+    "description_ko": "사전학습된 ResNet50의 가중치를 해동(unfreeze)하여 커스텀 이미지 분류에 파인튜닝합니다. 전이학습의 핵심인 backbone trainable 설정을 학습합니다.",
+    "tags": [
+      "transfer-learning",
+      "resnet50",
+      "fine-tuning",
+      "imagenet",
+      "cnn"
+    ],
+    "estimated_time": "20분",
+    "dataset_info": {
+      "name": "Custom Image Dataset",
+      "source": "custom folder",
+      "samples": 5000,
+      "features": "224x224x3",
+      "classes": 10
+    },
+    "learning_objectives": [
+      "전이학습과 파인튜닝의 차이점 이해",
+      "ResNet50 backbone의 가중치 해동(unfreeze) 방법",
+      "낮은 학습률로 사전학습 가중치를 보존하며 학습",
+      "ImageNet 사전학습 모델의 활용법",
+      "Dense 헤드 교체를 통한 커스텀 분류기 구성"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "ImageFolder_1",
+        "text": "224x224 크기의 RGB 이미지 폴더를 로드합니다. ResNet50의 입력 크기에 맞춥니다."
+      },
+      {
+        "step": 2,
+        "node": "TrainValSplit_1",
+        "text": "학습(80%)과 검증(20%)으로 데이터를 분할합니다."
+      },
+      {
+        "step": 3,
+        "node": "PretrainedModel_1",
+        "text": "ResNet50 backbone을 로드하고 trainable=true로 설정하여 파인튜닝합니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense_1",
+        "text": "256개 뉴런의 은닉층으로 ResNet50 특징을 분류에 적합한 표현으로 변환합니다."
+      },
+      {
+        "step": 5,
+        "node": "Dense_2",
+        "text": "10개 클래스에 대한 softmax 출력층입니다."
+      },
+      {
+        "step": 6,
+        "node": "Trainer_1",
+        "text": "낮은 학습률(0.0001)로 파인튜닝합니다. 사전학습 가중치를 크게 변경하지 않으면서 적응시킵니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "ImageFolder_1",
+      "type": "ImageFolder",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "folder_path": "datasets/custom_images",
+        "image_size": [
+          224,
+          224
+        ],
+        "color_mode": "rgb"
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "test_ratio": 0.0,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "PretrainedModel_1",
+      "type": "PretrainedModel",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "model_name": "ResNet50",
+        "weights": "imagenet",
+        "include_top": false,
+        "trainable": true,
+        "freeze_until": "conv5_block1"
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "units": 256,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_1",
+      "type": "Dropout",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "rate": 0.5
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 10,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 1170,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.0001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 1170,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "epochs": 15,
+        "batch_size": 32,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1450,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "AccuracyCurve_1",
+      "type": "AccuracyCurve",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "PretrainedModel_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dropout_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "AccuracyCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

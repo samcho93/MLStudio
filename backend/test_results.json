@@ -1,0 +1,702 @@
+[
+  {
+    "id": 92,
+    "title": "Ensemble Model Comparison",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 141.83
+  },
+  {
+    "id": 93,
+    "title": "Hyperparameter Search",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.47
+  },
+  {
+    "id": 94,
+    "title": "Mixed Input Model (Image + Tabular)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.59
+  },
+  {
+    "id": 95,
+    "title": "Progressive Transfer Learning (Staged Unfreezing)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.44
+  },
+  {
+    "id": 96,
+    "title": "Knowledge Distillation",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 142.0
+  },
+  {
+    "id": 97,
+    "title": "Class Imbalance Handling Comparison",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.77
+  },
+  {
+    "id": 98,
+    "title": "K-Fold Cross Validation",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 2.35
+  },
+  {
+    "id": 99,
+    "title": "ONNX Export + C# Inference",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 36.47
+  },
+  {
+    "id": 100,
+    "title": "Full Pipeline Comprehensive Example",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.58
+  },
+  {
+    "id": 1,
+    "title": "Iris Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.74
+  },
+  {
+    "id": 2,
+    "title": "Titanic Survival Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.2
+  },
+  {
+    "id": 3,
+    "title": "MNIST Dense Network",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 52.54
+  },
+  {
+    "id": 4,
+    "title": "MNIST CNN Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 17.13
+  },
+  {
+    "id": 5,
+    "title": "Fashion MNIST Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 35.21
+  },
+  {
+    "id": 6,
+    "title": "CIFAR-10 Image Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 71.94
+  },
+  {
+    "id": 7,
+    "title": "Dog vs Cat Binary Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.38
+  },
+  {
+    "id": 8,
+    "title": "Flower Classification (Transfer Learning)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.47
+  },
+  {
+    "id": 9,
+    "title": "Spam Email Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.44
+  },
+  {
+    "id": 10,
+    "title": "Sentiment Analysis (Positive/Negative)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.28
+  },
+  {
+    "id": 11,
+    "title": "Wine Quality Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.41
+  },
+  {
+    "id": 12,
+    "title": "Breast Cancer Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.28
+  },
+  {
+    "id": 13,
+    "title": "Diabetes Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.96
+  },
+  {
+    "id": 14,
+    "title": "Credit Card Fraud Detection (Imbalanced)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.55
+  },
+  {
+    "id": 15,
+    "title": "Hand Gesture Recognition",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.3
+  },
+  {
+    "id": 16,
+    "title": "Facial Expression Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.36
+  },
+  {
+    "id": 17,
+    "title": "Skin Lesion Classification (Transfer Learning)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.41
+  },
+  {
+    "id": 18,
+    "title": "Soil Type Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.6
+  },
+  {
+    "id": 19,
+    "title": "Brain MRI Tumor Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.38
+  },
+  {
+    "id": 20,
+    "title": "Voice Command Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.46
+  },
+  {
+    "id": 21,
+    "title": "Vehicle Fault Type Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.33
+  },
+  {
+    "id": 22,
+    "title": "Plant Disease Classification (Transfer Learning)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.35
+  },
+  {
+    "id": 23,
+    "title": "Document Topic Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.43
+  },
+  {
+    "id": 24,
+    "title": "Traffic Sign Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.36
+  },
+  {
+    "id": 25,
+    "title": "Multi-Label Movie Genre Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.44
+  },
+  {
+    "id": 56,
+    "title": "ResNet50 Transfer Learning Fine-Tuning",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.45
+  },
+  {
+    "id": 57,
+    "title": "EfficientNetB0 Transfer Learning",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.31
+  },
+  {
+    "id": 58,
+    "title": "Data Augmentation Effect Comparison",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.35
+  },
+  {
+    "id": 59,
+    "title": "Grad-CAM Visualization",
+    "status": "ok",
+    "message": "pipeline ok",
+    "time": 0.21
+  },
+  {
+    "id": 60,
+    "title": "Feature Map Visualization",
+    "status": "ok",
+    "message": "pipeline ok",
+    "time": 0.12
+  },
+  {
+    "id": 61,
+    "title": "U-Net Image Segmentation",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.31
+  },
+  {
+    "id": 62,
+    "title": "Bounding Box Regression",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.59
+  },
+  {
+    "id": 63,
+    "title": "Siamese Network Similarity",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.35
+  },
+  {
+    "id": 64,
+    "title": "Medical X-ray Anomaly Detection",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.33
+  },
+  {
+    "id": 65,
+    "title": "Satellite Image Land Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.3
+  },
+  {
+    "id": 66,
+    "title": "Document Layout Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.34
+  },
+  {
+    "id": 67,
+    "title": "Hand Gesture Recognition",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.31
+  },
+  {
+    "id": 68,
+    "title": "Super Resolution SRCNN",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.61
+  },
+  {
+    "id": 69,
+    "title": "Style Transfer Feature Extraction",
+    "status": "ok",
+    "message": "pipeline ok",
+    "time": 9.93
+  },
+  {
+    "id": 70,
+    "title": "Defect Image Classification (Few-Shot)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.5
+  },
+  {
+    "id": 71,
+    "title": "Movie Review Sentiment Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.64
+  },
+  {
+    "id": 72,
+    "title": "Text Toxicity Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.25
+  },
+  {
+    "id": 73,
+    "title": "News Category Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.37
+  },
+  {
+    "id": 74,
+    "title": "Machine Translation Quality Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 2.11
+  },
+  {
+    "id": 75,
+    "title": "Sentence Similarity Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.16
+  },
+  {
+    "id": 76,
+    "title": "Named Entity Recognition (NER)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.14
+  },
+  {
+    "id": 77,
+    "title": "Next Word Prediction (Language Model)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.52
+  },
+  {
+    "id": 78,
+    "title": "Keyword Extraction Score Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.3
+  },
+  {
+    "id": 79,
+    "title": "Question-Answer Type Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.48
+  },
+  {
+    "id": 80,
+    "title": "Chatbot Intent Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.49
+  },
+  {
+    "id": 81,
+    "title": "Code Language Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.23
+  },
+  {
+    "id": 82,
+    "title": "Sentiment Intensity Regression",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.39
+  },
+  {
+    "id": 26,
+    "title": "Boston Housing Price Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.55
+  },
+  {
+    "id": 27,
+    "title": "Car MPG Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.41
+  },
+  {
+    "id": 28,
+    "title": "Temperature Prediction (Time Series)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 2.39
+  },
+  {
+    "id": 29,
+    "title": "Stock Price Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 2.74
+  },
+  {
+    "id": 30,
+    "title": "Power Consumption Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.4
+  },
+  {
+    "id": 31,
+    "title": "Age Prediction from Face Images",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.65
+  },
+  {
+    "id": 32,
+    "title": "Real Estate Price Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.51
+  },
+  {
+    "id": 33,
+    "title": "CO2 Emission Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.31
+  },
+  {
+    "id": 34,
+    "title": "Solar Power Generation Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 2.5
+  },
+  {
+    "id": 35,
+    "title": "Medical Cost Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.09
+  },
+  {
+    "id": 36,
+    "title": "Food Calorie Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.65
+  },
+  {
+    "id": 37,
+    "title": "Wind Speed Prediction (Multi-step)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.74
+  },
+  {
+    "id": 38,
+    "title": "Traffic Volume Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.55
+  },
+  {
+    "id": 39,
+    "title": "Water Quality Index Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.25
+  },
+  {
+    "id": 40,
+    "title": "Building Energy Efficiency Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.44
+  },
+  {
+    "id": 41,
+    "title": "EEG Brainwave Intensity Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.32
+  },
+  {
+    "id": 42,
+    "title": "Product Sales Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.19
+  },
+  {
+    "id": 43,
+    "title": "Exchange Rate Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 2.01
+  },
+  {
+    "id": 44,
+    "title": "Rainfall Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.33
+  },
+  {
+    "id": 45,
+    "title": "Car Price Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.85
+  },
+  {
+    "id": 83,
+    "title": "Multivariate Time Series Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.5
+  },
+  {
+    "id": 84,
+    "title": "Multi-Step Time Series Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.69
+  },
+  {
+    "id": 85,
+    "title": "CNN+LSTM Hybrid Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 2.5
+  },
+  {
+    "id": 86,
+    "title": "ECG Anomaly Detection (LSTM Autoencoder)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.64
+  },
+  {
+    "id": 87,
+    "title": "Vibration Sensor Fault Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.35
+  },
+  {
+    "id": 88,
+    "title": "Weather Next-Day Prediction (Transformer)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.79
+  },
+  {
+    "id": 89,
+    "title": "IoT Sensor Anomaly Detection",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.15
+  },
+  {
+    "id": 90,
+    "title": "Multi-Channel Time Series Classification",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 0.44
+  },
+  {
+    "id": 91,
+    "title": "Seq2Seq Encoder-Decoder Prediction",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 3.45
+  },
+  {
+    "id": 46,
+    "title": "Customer Segmentation (K-Means Visualization)",
+    "status": "ok",
+    "message": "pipeline ok",
+    "time": 0.76
+  },
+  {
+    "id": 47,
+    "title": "Anomaly Detection (Autoencoder)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.97
+  },
+  {
+    "id": 48,
+    "title": "Manufacturing Defect Detection (Autoencoder)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 1.55
+  },
+  {
+    "id": 49,
+    "title": "Image Compression (Autoencoder)",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 24.06
+  },
+  {
+    "id": 50,
+    "title": "Dimensionality Reduction Visualization (PCA + t-SNE)",
+    "status": "ok",
+    "message": "pipeline ok",
+    "time": 9.31
+  },
+  {
+    "id": 51,
+    "title": "Song Genre Clustering",
+    "status": "ok",
+    "message": "pipeline ok",
+    "time": 1.37
+  },
+  {
+    "id": 52,
+    "title": "News Article Clustering",
+    "status": "ok",
+    "message": "pipeline ok",
+    "time": 0.17
+  },
+  {
+    "id": 53,
+    "title": "Sensor Anomaly Detection",
+    "status": "ok",
+    "message": "trained ok",
+    "time": 3.26
+  },
+  {
+    "id": 54,
+    "title": "Face Embedding Visualization",
+    "status": "ok",
+    "message": "pipeline ok",
+    "time": 0.02
+  },
+  {
+    "id": 55,
+    "title": "Text Similarity Visualization",
+    "status": "ok",
+    "message": "pipeline ok",
+    "time": 0.13
+  }
+]

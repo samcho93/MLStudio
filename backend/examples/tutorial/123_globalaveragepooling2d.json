@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "id": 123,
+    "title": "GlobalAveragePooling2D",
+    "title_ko": "GlobalAvgPool로 Flatten 대체",
+    "category": "tutorial",
+    "difficulty": "intermediate",
+    "description": "Use GlobalAveragePooling2D instead of Flatten for lighter models.",
+    "description_ko": "Flatten 대신 GlobalAveragePooling2D를 사용하여 파라미터 수를 크게 줄입니다.",
+    "tags": [
+      "global-avg-pool",
+      "경량화",
+      "cnn"
+    ],
+    "estimated_time": "2분",
+    "learning_objectives": [
+      "GlobalAvgPool: 채널별 평균 → 파라미터 대폭 감소",
+      "Flatten vs GlobalAvgPool 비교",
+      "현대 CNN에서 GlobalAvgPool이 표준"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "Conv2D_1",
+        "text": "64개 필터로 특징을 추출합니다."
+      },
+      {
+        "step": 2,
+        "node": "GlobalAveragePooling2D_1",
+        "text": "각 채널의 평균값만 남깁니다. 64개 특징 → 64차원 벡터."
+      },
+      {
+        "step": 3,
+        "node": "Dense_1",
+        "text": "64차원에서 바로 분류합니다. Flatten보다 파라미터가 훨씬 적습니다."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "ImageFolder_1",
+      "type": "ImageFolder",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "folder_path": "datasets/mnist_images",
+        "image_size": 28
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Conv2D_1",
+      "type": "Conv2D",
+      "position": {
+        "x": 50,
+        "y": 480
+      },
+      "params": {
+        "filters": 64,
+        "kernel_size": 3,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "GlobalAveragePooling2D_1",
+      "type": "GlobalAveragePooling2D",
+      "position": {
+        "x": 330,
+        "y": 480
+      },
+      "params": {}
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 610,
+        "y": 480
+      },
+      "params": {
+        "units": 10,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 890,
+        "y": 480
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 890,
+        "y": 880
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "epochs": 5,
+        "batch_size": 32,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "ModelSummary_1",
+      "type": "ModelSummary",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Conv2D_1",
+      "target": "GlobalAveragePooling2D_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "GlobalAveragePooling2D_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "ModelSummary_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    }
+  ]
+}

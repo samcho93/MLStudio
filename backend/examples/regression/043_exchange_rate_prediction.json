@@ -1,0 +1,231 @@
+{
+  "meta": {
+    "id": 43,
+    "title": "Exchange Rate Prediction",
+    "title_ko": "환율 예측",
+    "category": "regression",
+    "difficulty": "intermediate",
+    "description": "Predict currency exchange rates using GRU on time-series financial data with MinMaxScaler.",
+    "description_ko": "GRU를 사용하여 환율 시계열 데이터를 학습하고 미래 환율을 예측합니다.",
+    "tags": [
+      "time-series",
+      "regression",
+      "gru",
+      "finance",
+      "forex"
+    ],
+    "estimated_time": "5분",
+    "dataset_info": {
+      "name": "Foreign Exchange Rates",
+      "source": "Federal Reserve / Kaggle",
+      "samples": 6300,
+      "features": 5
+    },
+    "learning_objectives": [
+      "금융 시계열에 GRU 적용",
+      "환율 데이터의 MinMax 정규화",
+      "GRU로 금융 패턴 학습",
+      "금융 예측의 한계와 주의점"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "환율 데이터: 일별 환율(USD/KRW 등)과 관련 경제 지표입니다."
+      },
+      {
+        "step": 2,
+        "node": "MinMaxScaler_1",
+        "text": "환율 값을 0~1로 정규화합니다."
+      },
+      {
+        "step": 3,
+        "node": "GRU_1",
+        "text": "GRU로 환율의 시간적 패턴을 학습합니다. LSTM보다 빠릅니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense_1",
+        "text": "출력: units=1, linear. 다음 시점 환율을 예측합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/exchange_rates.csv",
+        "target_column": "exchange_rate"
+      }
+    },
+    {
+      "id": "MinMaxScaler_1",
+      "type": "MinMaxScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2
+      }
+    },
+    {
+      "id": "GRU_1",
+      "type": "GRU",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "units": 64,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "units": 1,
+        "activation": "linear"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 890,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 890,
+        "y": 764
+      },
+      "params": {
+        "type": "mse"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "epochs": 50,
+        "batch_size": 32,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "MinMaxScaler_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MinMaxScaler_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "output",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "GRU_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

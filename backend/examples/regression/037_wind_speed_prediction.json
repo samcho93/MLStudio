@@ -1,0 +1,254 @@
+{
+  "meta": {
+    "id": 37,
+    "title": "Wind Speed Prediction (Multi-step)",
+    "title_ko": "풍속 예측 (멀티스텝)",
+    "category": "regression",
+    "difficulty": "advanced",
+    "description": "Predict multi-step future wind speeds using a stacked 2-layer LSTM on meteorological data.",
+    "description_ko": "2층 LSTM으로 여러 시점의 풍속을 동시에 예측합니다. 멀티스텝 시계열 예측을 배웁니다.",
+    "tags": [
+      "time-series",
+      "regression",
+      "lstm",
+      "weather",
+      "multi-step"
+    ],
+    "estimated_time": "8분",
+    "dataset_info": {
+      "name": "Wind Speed Dataset",
+      "source": "NOAA / Kaggle",
+      "samples": 52560,
+      "features": 8
+    },
+    "learning_objectives": [
+      "멀티스텝 예측: 여러 미래 시점을 동시 예측",
+      "Stacked LSTM (2층) 구조",
+      "return_sequences=true의 의미와 활용",
+      "출력 Dense의 units=N (예측 스텝 수)"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "기상 데이터: 풍속, 풍향, 기온, 기압 등으로 미래 풍속을 예측합니다."
+      },
+      {
+        "step": 2,
+        "node": "MinMaxScaler_1",
+        "text": "기상 변수를 0~1로 정규화합니다."
+      },
+      {
+        "step": 3,
+        "node": "LSTM_1",
+        "text": "첫 번째 LSTM: return_sequences=true로 전체 시퀀스를 다음 레이어에 전달합니다."
+      },
+      {
+        "step": 4,
+        "node": "LSTM_2",
+        "text": "두 번째 LSTM: return_sequences=false로 최종 히든 상태만 출력합니다."
+      },
+      {
+        "step": 5,
+        "node": "Dense_1",
+        "text": "출력: units=1, linear. 풍속 예측값을 출력합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/wind_speed.csv",
+        "target_column": "wind_speed"
+      }
+    },
+    {
+      "id": "MinMaxScaler_1",
+      "type": "MinMaxScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2
+      }
+    },
+    {
+      "id": "LSTM_1",
+      "type": "LSTM",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "units": 128,
+        "return_sequences": true
+      }
+    },
+    {
+      "id": "LSTM_2",
+      "type": "LSTM",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "units": 64,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 610,
+        "y": 422
+      },
+      "params": {
+        "units": 1,
+        "activation": "linear"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 890,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 890,
+        "y": 764
+      },
+      "params": {
+        "type": "mse"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "epochs": 50,
+        "batch_size": 64,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "MinMaxScaler_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MinMaxScaler_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "output",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "LSTM_1",
+      "target": "LSTM_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "LSTM_2",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

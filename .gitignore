@@ -1,0 +1,42 @@
+# ── 사용자 지정 제외 ─────────────────────────────
+# Folder
+.claude/
+docs/
+/backend/datasets
+/backend/__pycache__
+
+# Files
+firewall_setup.bat
+ngrok.exe
+start_tunnel.bat
+
+# ── 빌드/런타임 산출물 (표준 제외) ────────────────
+# Node
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+
+# ML 학습/업로드 결과물 (로컬 전용)
+/backend/outputs/
+/backend/uploads/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 빌드 캐시
+*.tsbuildinfo

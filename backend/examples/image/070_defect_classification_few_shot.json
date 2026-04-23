@@ -1,0 +1,333 @@
+{
+  "meta": {
+    "id": 70,
+    "title": "Defect Image Classification (Few-Shot)",
+    "title_ko": "결함 이미지 분류 (소량 데이터)",
+    "category": "image",
+    "difficulty": "intermediate",
+    "description": "Classify manufacturing defects with limited training data using data augmentation and a pretrained model for robust feature extraction.",
+    "description_ko": "소량의 학습 데이터로 제조 결함을 분류합니다. 데이터 증강과 사전학습 모델을 결합하여 적은 데이터에서도 높은 정확도를 달성합니다.",
+    "tags": [
+      "defect-detection",
+      "few-shot",
+      "augmentation",
+      "transfer-learning",
+      "manufacturing"
+    ],
+    "estimated_time": "20분",
+    "dataset_info": {
+      "name": "Manufacturing Defect Dataset",
+      "source": "custom folder",
+      "samples": 500,
+      "features": "224x224x3",
+      "classes": 4
+    },
+    "learning_objectives": [
+      "소량 데이터에서 전이학습의 효과",
+      "데이터 증강으로 학습 데이터 부족 보완",
+      "Augmentation + PretrainedModel 결합 전략",
+      "제조업 품질 검사에서의 딥러닝 활용",
+      "과적합 방지를 위한 Dropout 활용"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "ImageFolder_1",
+        "text": "결함 이미지를 로드합니다. scratch, dent, crack, ok 4가지 클래스. 클래스당 약 125장의 소량 데이터입니다."
+      },
+      {
+        "step": 2,
+        "node": "TrainValSplit_1",
+        "text": "학습(80%)과 검증(20%)으로 분할합니다. 소량이므로 random_seed 고정이 중요합니다."
+      },
+      {
+        "step": 3,
+        "node": "Augmentation_1",
+        "text": "회전, 반전, 줌, 밝기 변환으로 학습 데이터를 증강합니다. 소량 데이터에서 핵심적인 역할을 합니다."
+      },
+      {
+        "step": 4,
+        "node": "PretrainedModel_1",
+        "text": "MobileNetV2 사전학습 모델을 사용합니다. 이미 학습된 특징 추출 능력을 활용하여 소량 데이터에서도 효과적입니다."
+      },
+      {
+        "step": 5,
+        "node": "Dense_1",
+        "text": "128개 뉴런 은닉층으로 결함 유형별 특징을 학습합니다."
+      },
+      {
+        "step": 6,
+        "node": "Dense_2",
+        "text": "4개 결함 유형에 대한 softmax 출력입니다."
+      },
+      {
+        "step": 7,
+        "node": "Trainer_1",
+        "text": "증강 + 전이학습 조합으로 소량 데이터에서도 80%+ 정확도를 목표합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "ImageFolder_1",
+      "type": "ImageFolder",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "folder_path": "datasets/manufacturing_defects",
+        "image_size": [
+          224,
+          224
+        ],
+        "color_mode": "rgb"
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "test_ratio": 0.0,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Augmentation_1",
+      "type": "Augmentation",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "horizontal_flip": true,
+        "vertical_flip": true,
+        "rotation_range": 30,
+        "zoom_range": 0.2,
+        "brightness_range": [
+          0.7,
+          1.3
+        ],
+        "width_shift_range": 0.1,
+        "height_shift_range": 0.1,
+        "fill_mode": "nearest"
+      }
+    },
+    {
+      "id": "PretrainedModel_1",
+      "type": "PretrainedModel",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "model_name": "MobileNetV2",
+        "weights": "imagenet",
+        "include_top": false,
+        "trainable": false
+      }
+    },
+    {
+      "id": "GlobalAveragePooling2D_1",
+      "type": "GlobalAveragePooling2D",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 610,
+        "y": 422
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_1",
+      "type": "Dropout",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "rate": 0.5
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "units": 4,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 1450,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.0001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 1450,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "epochs": 30,
+        "batch_size": 16,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1730,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "AccuracyCurve_1",
+      "type": "AccuracyCurve",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Augmentation_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Augmentation_1",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "PretrainedModel_1",
+      "target": "GlobalAveragePooling2D_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "GlobalAveragePooling2D_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dropout_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "AccuracyCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

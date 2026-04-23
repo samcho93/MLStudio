@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "id": 51,
+    "title": "Song Genre Clustering",
+    "title_ko": "노래 장르 클러스터링",
+    "category": "unsupervised",
+    "difficulty": "beginner",
+    "description": "Cluster songs by audio features (tempo, energy, danceability) using PCA and UMAP for visualization.",
+    "description_ko": "템포, 에너지, 댄서빌리티 등 오디오 특성으로 노래를 클러스터링하고, PCA와 UMAP으로 장르 분포를 시각화합니다.",
+    "tags": [
+      "tabular",
+      "unsupervised",
+      "clustering",
+      "umap",
+      "pca",
+      "music",
+      "beginner"
+    ],
+    "estimated_time": "2~3분",
+    "dataset_info": {
+      "name": "Spotify Audio Features",
+      "source": "Kaggle / Spotify API",
+      "samples": 5000,
+      "features": 13,
+      "classes": null
+    },
+    "learning_objectives": [
+      "오디오 특성(audio features) 기반 음악 분석 이해",
+      "UMAP과 t-SNE의 차이점 비교 (속도, 전역 구조 보존)",
+      "PCA로 사전 차원 축소의 효과",
+      "UMAP의 n_neighbors, min_dist 파라미터 역할",
+      "클러스터링 결과의 비즈니스 해석 (음악 추천 시스템)"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "Spotify 오디오 특성 데이터를 로드합니다. 템포, 에너지, 댄서빌리티 등 13개 특성입니다."
+      },
+      {
+        "step": 2,
+        "node": "StandardScaler_1",
+        "text": "모든 특성을 표준화합니다. 템포(BPM)와 에너지(0~1) 등 스케일이 다른 값들을 맞춥니다."
+      },
+      {
+        "step": 3,
+        "node": "PCA_1",
+        "text": "13차원 → 5차원으로 축소합니다. UMAP 전에 노이즈를 줄입니다."
+      },
+      {
+        "step": 4,
+        "node": "UMAPViewer_1",
+        "text": "UMAP으로 2D 투영합니다. t-SNE보다 빠르고 전역 구조를 더 잘 보존합니다. 비슷한 장르의 곡들이 모여 있는 것을 확인하세요."
+      }
+    ],
+    "requires_phase": 3
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/spotify_audio_features.csv",
+        "target_column": "",
+        "separator": ","
+      }
+    },
+    {
+      "id": "StandardScaler_1",
+      "type": "StandardScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "PCA_1",
+      "type": "PCA",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "n_components": 5,
+        "whiten": false
+      }
+    },
+    {
+      "id": "UMAPViewer_1",
+      "type": "UMAPViewer",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "n_neighbors": 15,
+        "min_dist": 0.1,
+        "n_components": 2,
+        "metric": "euclidean",
+        "random_state": 42
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "StandardScaler_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "StandardScaler_1",
+      "target": "PCA_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "PCA_1",
+      "target": "UMAPViewer_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    }
+  ]
+}

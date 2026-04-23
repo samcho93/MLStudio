@@ -1,0 +1,166 @@
+{
+  "meta": {
+    "id": 74,
+    "title": "Machine Translation Quality Prediction",
+    "title_ko": "기계 번역 품질 예측",
+    "category": "nlp",
+    "difficulty": "advanced",
+    "description": "Predict the quality score of machine translations using a Transformer Block with self-attention mechanism.",
+    "description_ko": "셀프 어텐션 메커니즘을 가진 트랜스포머 블록을 사용하여 기계 번역의 품질 점수를 예측합니다.",
+    "tags": [
+      "nlp",
+      "transformer",
+      "attention",
+      "translation",
+      "quality-estimation"
+    ],
+    "estimated_time": "25min",
+    "dataset_info": {
+      "name": "WMT Quality Estimation",
+      "source": "wmt-qe-task",
+      "samples": 30000,
+      "features": "text (source + translation pair)",
+      "target": "quality_class (0: poor, 1: acceptable, 2: good)"
+    },
+    "learning_objectives": [
+      "트랜스포머 블록의 내부 구조(Multi-Head Attention + FFN + LayerNorm)를 이해한다",
+      "셀프 어텐션 메커니즘이 텍스트의 장거리 의존성을 포착하는 원리를 학습한다",
+      "트랜스포머와 LSTM/GRU의 장단점을 비교한다",
+      "번역 품질 평가 태스크에 적합한 모델 구조를 설계한다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "csv_loader_01",
+        "text": "번역 품질 데이터셋을 로드합니다. 원문과 번역문 쌍, 품질 레이블을 포함합니다."
+      },
+      {
+        "step": 2,
+        "node": "Embedding",
+        "text": "12000개 어휘를 128차원 벡터로 변환합니다. 최대 시퀀스 길이 200을 설정합니다."
+      },
+      {
+        "step": 3,
+        "node": "transformer_01",
+        "text": "4개의 어텐션 헤드와 128 모델 차원의 트랜스포머 블록으로 문맥을 분석합니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense",
+        "text": "3개 유닛과 소프트맥스로 번역 품질 등급을 분류합니다."
+      },
+      {
+        "step": 5,
+        "node": "Trainer",
+        "text": "sparse_categorical_crossentropy로 30 에폭 학습합니다."
+      }
+    ],
+    "requires_phase": 3
+  },
+  "nodes": [
+    {
+      "id": "csv_loader_01",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/translation_quality.csv",
+        "text_column": "combined_text",
+        "label_column": "quality_class",
+        "tokenize": true,
+        "max_vocab": 12000,
+        "max_length": 200,
+        "target_column": ""
+      }
+    },
+    {
+      "id": "embedding_01",
+      "type": "Embedding",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "vocab_size": 12000,
+        "embedding_dim": 128,
+        "max_length": 200
+      }
+    },
+    {
+      "id": "transformer_01",
+      "type": "TransformerBlock",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "num_heads": 4,
+        "d_model": 128,
+        "ff_dim": 256,
+        "dropout_rate": 0.1,
+        "global_average_pooling": true
+      }
+    },
+    {
+      "id": "dense_01",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 3,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "trainer_01",
+      "type": "Trainer",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "epochs": 30,
+        "batch_size": 32,
+        "optimizer": "adam",
+        "learning_rate": 0.0005,
+        "loss": "sparse_categorical_crossentropy",
+        "metrics": [
+          "accuracy"
+        ],
+        "validation_split": 0.2,
+        "device": "auto"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "embedding_01",
+      "target": "transformer_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "transformer_01",
+      "target": "dense_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "dense_01",
+      "target": "trainer_01",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "dataset",
+      "target": "embedding_01",
+      "targetHandle": "input",
+      "id": "restore_csv_loader_01_embedding_01"
+    }
+  ]
+}

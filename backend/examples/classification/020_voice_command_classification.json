@@ -1,0 +1,304 @@
+{
+  "meta": {
+    "id": 20,
+    "title": "Voice Command Classification",
+    "title_ko": "음성 명령 분류",
+    "category": "classification",
+    "difficulty": "beginner",
+    "description": "Classify voice commands from MFCC features using a 3-layer Dense network.",
+    "description_ko": "MFCC 특성으로 추출된 음성 데이터를 Dense 네트워크로 분류합니다. 오디오 데이터의 기본 처리 방법을 배웁니다.",
+    "tags": [
+      "tabular",
+      "audio",
+      "mfcc",
+      "voice",
+      "dense",
+      "classification"
+    ],
+    "estimated_time": "3분",
+    "dataset_info": {
+      "name": "Voice Commands (MFCC)",
+      "source": "Speech Commands / custom",
+      "samples": 8000,
+      "features": 40,
+      "classes": 10
+    },
+    "learning_objectives": [
+      "MFCC(멜-주파수 켑스트럴 계수) 특성의 이해",
+      "음성 데이터를 수치 특성으로 변환하는 과정",
+      "Dense 네트워크로 음성 명령을 분류하는 방법",
+      "다중 클래스 분류에서의 softmax 활용"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "MFCC 특성이 추출된 음성 데이터 CSV를 로드합니다. 40개 주파수 특성이 포함됩니다."
+      },
+      {
+        "step": 2,
+        "node": "TrainValSplit_1",
+        "text": "학습(80%)과 검증(20%)으로 분할합니다."
+      },
+      {
+        "step": 3,
+        "node": "Dense_1",
+        "text": "256개 뉴런으로 MFCC 특성 패턴을 학습합니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense_2",
+        "text": "128개 뉴런의 중간 은닉층."
+      },
+      {
+        "step": 5,
+        "node": "Dense_3",
+        "text": "64개 뉴런의 세 번째 은닉층."
+      },
+      {
+        "step": 6,
+        "node": "Dense_4",
+        "text": "10개 뉴런 + softmax: 10종 음성 명령의 확률을 출력합니다."
+      },
+      {
+        "step": 7,
+        "node": "Trainer_1",
+        "text": "MFCC 특성은 정보가 잘 압축되어 있어 빠르게 수렴합니다."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/voice_commands_mfcc.csv",
+        "target_column": "command",
+        "separator": ","
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "test_ratio": 0.0,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "units": 256,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_1",
+      "type": "Dropout",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "rate": 0.3
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_3",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_4",
+      "type": "Dense",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "units": 10,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 1450,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 1450,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "epochs": 25,
+        "batch_size": 32,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1730,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "AccuracyCurve_1",
+      "type": "AccuracyCurve",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dropout_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Dense_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_3",
+      "target": "Dense_4",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_4",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "AccuracyCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

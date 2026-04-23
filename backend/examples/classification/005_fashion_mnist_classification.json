@@ -1,0 +1,271 @@
+{
+  "meta": {
+    "id": 5,
+    "title": "Fashion MNIST Classification",
+    "title_ko": "패션 MNIST 의류 분류",
+    "category": "classification",
+    "difficulty": "beginner",
+    "description": "Classify fashion items (T-shirt, trouser, pullover, etc.) using Conv2D + GlobalAveragePooling2D.",
+    "description_ko": "Conv2D와 GlobalAveragePooling2D로 10가지 의류 종류를 분류합니다. Flatten 대신 GAP 사용법을 배웁니다.",
+    "tags": [
+      "image",
+      "fashion",
+      "cnn",
+      "global-avg-pool"
+    ],
+    "estimated_time": "5분",
+    "dataset_info": {
+      "name": "Fashion MNIST",
+      "source": "tf.keras.datasets",
+      "samples": 70000,
+      "features": "28x28",
+      "classes": 10
+    },
+    "learning_objectives": [
+      "Fashion MNIST와 MNIST의 차이점",
+      "GlobalAveragePooling2D vs Flatten 비교",
+      "GAP의 장점: 파라미터 수 감소, 과적합 방지"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "NumpyInput_1",
+        "text": "Fashion MNIST 데이터셋: T-shirt, 바지, 풀오버 등 10종 의류 이미지입니다."
+      },
+      {
+        "step": 2,
+        "node": "Conv2D_1",
+        "text": "32개 필터로 의류의 모양, 텍스처 특징을 추출합니다."
+      },
+      {
+        "step": 3,
+        "node": "Conv2D_2",
+        "text": "64개 필터로 더 세밀한 패턴을 감지합니다."
+      },
+      {
+        "step": 4,
+        "node": "GlobalAveragePooling2D_1",
+        "text": "Flatten 대신 GAP 사용! 각 채널의 평균을 구해 64차원 벡터를 만듭니다."
+      },
+      {
+        "step": 5,
+        "node": "Dense_1",
+        "text": "128개 뉴런 은닉층으로 특징을 종합합니다."
+      },
+      {
+        "step": 6,
+        "node": "Trainer_1",
+        "text": "학습 후 MNIST보다 어려운 데이터인 만큼 정확도 차이를 관찰하세요."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "NumpyInput_1",
+      "type": "NumpyInput",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "dataset": "fashion_mnist"
+      }
+    },
+    {
+      "id": "Conv2D_1",
+      "type": "Conv2D",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "filters": 32,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "Conv2D_2",
+      "type": "Conv2D",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "filters": 64,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "GlobalAveragePooling2D_1",
+      "type": "GlobalAveragePooling2D",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "units": 10,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 1450,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 1450,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "epochs": 10,
+        "batch_size": 64,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1730,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "AccuracyCurve_1",
+      "type": "AccuracyCurve",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "Conv2D_1",
+      "target": "Conv2D_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_2",
+      "target": "GlobalAveragePooling2D_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "GlobalAveragePooling2D_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "NumpyInput_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "NumpyInput_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "NumpyInput_1",
+      "target": "Trainer_1",
+      "sourceHandle": "test_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "NumpyInput_1",
+      "target": "Trainer_1",
+      "sourceHandle": "test_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "AccuracyCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

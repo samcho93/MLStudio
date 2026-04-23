@@ -1,0 +1,317 @@
+{
+  "meta": {
+    "id": 25,
+    "title": "Multi-Label Movie Genre Classification",
+    "title_ko": "다중 레이블 분류 (영화 장르)",
+    "category": "classification",
+    "difficulty": "advanced",
+    "description": "Classify movie genres as multi-label (a movie can belong to multiple genres) using Embedding + LSTM with sigmoid output.",
+    "description_ko": "Embedding과 LSTM을 사용하여 영화의 여러 장르를 동시에 예측합니다. 다중 레이블 분류에서 sigmoid와 binary_crossentropy 사용법을 배웁니다.",
+    "tags": [
+      "nlp",
+      "text",
+      "multi-label",
+      "movie",
+      "genre",
+      "lstm",
+      "embedding"
+    ],
+    "estimated_time": "10분",
+    "dataset_info": {
+      "name": "Movie Genre Dataset",
+      "source": "IMDB / custom",
+      "samples": 15000,
+      "features": "text (tokenized sequences)",
+      "classes": 8,
+      "multi_label": true
+    },
+    "learning_objectives": [
+      "다중 레이블(multi-label) vs 다중 클래스(multi-class)의 차이",
+      "sigmoid 활성화: 각 장르를 독립적으로 예측",
+      "binary_crossentropy: 다중 레이블에서의 손실 함수",
+      "영화 줄거리 텍스트에서 장르를 추론하는 파이프라인",
+      "LSTM으로 긴 텍스트 시퀀스 처리"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "영화 줄거리와 장르 레이블 CSV를 로드합니다. 한 영화에 여러 장르가 할당됩니다."
+      },
+      {
+        "step": 2,
+        "node": "TrainValSplit_1",
+        "text": "학습(80%)과 검증(20%)으로 분할합니다."
+      },
+      {
+        "step": 3,
+        "node": "Embedding_1",
+        "text": "줄거리 텍스트의 단어를 128차원 벡터로 변환합니다."
+      },
+      {
+        "step": 4,
+        "node": "LSTM_1",
+        "text": "128 유닛 LSTM: 줄거리 전체를 읽으며 장르 관련 패턴을 학습합니다."
+      },
+      {
+        "step": 5,
+        "node": "Dense_1",
+        "text": "64개 뉴런 은닉층으로 특징을 종합합니다."
+      },
+      {
+        "step": 6,
+        "node": "Dense_2",
+        "text": "8개 뉴런 + sigmoid: 각 장르의 확률을 독립적으로 출력합니다. softmax와 달리 합이 1이 아닙니다."
+      },
+      {
+        "step": 7,
+        "node": "Trainer_1",
+        "text": "binary_crossentropy로 학습합니다. 각 장르를 독립적인 이진 분류로 처리합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/movie_genres.csv",
+        "target_column": "genres",
+        "text_column": "plot",
+        "separator": ",",
+        "multi_label": true
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "test_ratio": 0.0,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Embedding_1",
+      "type": "Embedding",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "vocab_size": 20000,
+        "embedding_dim": 128,
+        "max_length": 400
+      }
+    },
+    {
+      "id": "LSTM_1",
+      "type": "LSTM",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "units": 128,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "Dropout_1",
+      "type": "Dropout",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "rate": 0.4
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "units": 8,
+        "activation": "sigmoid"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 1450,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 1450,
+        "y": 764
+      },
+      "params": {
+        "type": "binary_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "epochs": 15,
+        "batch_size": 64,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1730,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "AccuracyCurve_1",
+      "type": "AccuracyCurve",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Embedding_1",
+      "target": "LSTM_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "LSTM_1",
+      "target": "Dropout_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "AccuracyCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "CSVLoader_1",
+      "sourceHandle": "dataset",
+      "target": "Embedding_1",
+      "targetHandle": "input",
+      "id": "restore_CSVLoader_1_Embedding_1"
+    }
+  ]
+}

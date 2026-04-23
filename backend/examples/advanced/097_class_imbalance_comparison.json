@@ -1,0 +1,735 @@
+{
+  "meta": {
+    "id": 97,
+    "title": "Class Imbalance Handling Comparison",
+    "title_ko": "클래스 불균형 처리 비교",
+    "category": "advanced",
+    "difficulty": "advanced",
+    "description": "Compare three strategies for handling class imbalance: class weights, oversampling, and Focal Loss, training identical models with each approach.",
+    "description_ko": "클래스 불균형 데이터에 대해 Class Weight, 오버샘플링, Focal Loss 세 가지 전략을 비교합니다.",
+    "tags": [
+      "class-imbalance",
+      "focal-loss",
+      "oversampling",
+      "class-weight",
+      "comparison",
+      "binary-classification"
+    ],
+    "estimated_time": "20분",
+    "dataset_info": {
+      "name": "Credit Card Fraud Detection",
+      "source": "Kaggle",
+      "samples": 284807,
+      "features": 30,
+      "target": "Class (0: normal 99.83%, 1: fraud 0.17%)"
+    },
+    "learning_objectives": [
+      "클래스 불균형 문제의 심각성과 해결 전략을 이해한다",
+      "Class Weight, 오버샘플링, Focal Loss의 원리와 차이를 비교한다",
+      "불균형 데이터에서 Accuracy보다 Precision/Recall/F1이 중요한 이유를 배운다",
+      "ROC-AUC와 PR Curve를 활용한 적절한 평가 방법을 학습한다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "신용카드 사기 탐지 데이터셋을 로드합니다. 극심한 클래스 불균형(0.17% 사기)입니다."
+      },
+      {
+        "step": 2,
+        "node": "StandardScaler_1",
+        "text": "특성을 정규화합니다. 세 전략 모두 동일한 전처리를 사용합니다."
+      },
+      {
+        "step": 3,
+        "node": "Trainer_A",
+        "text": "전략 A: Class Weight로 소수 클래스에 높은 가중치를 부여합니다."
+      },
+      {
+        "step": 4,
+        "node": "Trainer_B",
+        "text": "전략 B: 오버샘플링으로 소수 클래스 데이터를 복제합니다."
+      },
+      {
+        "step": 5,
+        "node": "Trainer_C",
+        "text": "전략 C: Focal Loss로 어려운 샘플에 집중합니다."
+      },
+      {
+        "step": 6,
+        "node": "ClassificationMetrics_1",
+        "text": "세 전략의 Precision, Recall, F1을 비교합니다. Accuracy만으로는 불충분합니다."
+      },
+      {
+        "step": 7,
+        "node": "ROCCurve_1",
+        "text": "ROC 곡선과 AUC로 전체적인 분류 성능을 비교합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/creditcard.csv",
+        "target_column": "Class"
+      }
+    },
+    {
+      "id": "StandardScaler_1",
+      "type": "StandardScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "fit_on": "train"
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "train_ratio": 0.8,
+        "val_ratio": 0.1,
+        "test_ratio": 0.1,
+        "shuffle": true,
+        "random_seed": 42,
+        "stratify": true
+      }
+    },
+    {
+      "id": "Dense_A1",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_A1",
+      "type": "Dropout",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "rate": 0.3
+      }
+    },
+    {
+      "id": "Dense_A2",
+      "type": "Dense",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_A3",
+      "type": "Dense",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {
+        "units": 1,
+        "activation": "sigmoid"
+      }
+    },
+    {
+      "id": "Optimizer_A",
+      "type": "Optimizer",
+      "position": {
+        "x": 2010,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_A",
+      "type": "LossFunction",
+      "position": {
+        "x": 2010,
+        "y": 764
+      },
+      "params": {
+        "type": "binary_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_A",
+      "type": "Trainer",
+      "position": {
+        "x": 2010,
+        "y": 80
+      },
+      "params": {
+        "epochs": 20,
+        "batch_size": 256,
+        "framework": "pytorch",
+        "model_name": "ClassWeight",
+        "class_weight": "auto"
+      }
+    },
+    {
+      "id": "Dense_B1",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 422
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_B1",
+      "type": "Dropout",
+      "position": {
+        "x": 1170,
+        "y": 422
+      },
+      "params": {
+        "rate": 0.3
+      }
+    },
+    {
+      "id": "Dense_B2",
+      "type": "Dense",
+      "position": {
+        "x": 1450,
+        "y": 422
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_B3",
+      "type": "Dense",
+      "position": {
+        "x": 1730,
+        "y": 422
+      },
+      "params": {
+        "units": 1,
+        "activation": "sigmoid"
+      }
+    },
+    {
+      "id": "Optimizer_B",
+      "type": "Optimizer",
+      "position": {
+        "x": 2010,
+        "y": 764
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_B",
+      "type": "LossFunction",
+      "position": {
+        "x": 2010,
+        "y": 1106
+      },
+      "params": {
+        "type": "binary_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_B",
+      "type": "Trainer",
+      "position": {
+        "x": 2010,
+        "y": 422
+      },
+      "params": {
+        "epochs": 20,
+        "batch_size": 256,
+        "framework": "pytorch",
+        "model_name": "Oversampling",
+        "oversample": {
+          "enabled": true,
+          "strategy": "SMOTE",
+          "target_ratio": 0.5
+        }
+      }
+    },
+    {
+      "id": "Dense_C1",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 764
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_C1",
+      "type": "Dropout",
+      "position": {
+        "x": 1170,
+        "y": 764
+      },
+      "params": {
+        "rate": 0.3
+      }
+    },
+    {
+      "id": "Dense_C2",
+      "type": "Dense",
+      "position": {
+        "x": 1450,
+        "y": 764
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_C3",
+      "type": "Dense",
+      "position": {
+        "x": 1730,
+        "y": 764
+      },
+      "params": {
+        "units": 1,
+        "activation": "sigmoid"
+      }
+    },
+    {
+      "id": "Optimizer_C",
+      "type": "Optimizer",
+      "position": {
+        "x": 2010,
+        "y": 1106
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_C",
+      "type": "LossFunction",
+      "position": {
+        "x": 2010,
+        "y": 1448
+      },
+      "params": {
+        "type": "focal_loss",
+        "gamma": 2.0,
+        "alpha": 0.25
+      }
+    },
+    {
+      "id": "Trainer_C",
+      "type": "Trainer",
+      "position": {
+        "x": 2010,
+        "y": 764
+      },
+      "params": {
+        "epochs": 20,
+        "batch_size": 256,
+        "framework": "pytorch",
+        "model_name": "FocalLoss"
+      }
+    },
+    {
+      "id": "ClassificationMetrics_1",
+      "type": "ClassificationMetrics",
+      "position": {
+        "x": 2290,
+        "y": 80
+      },
+      "params": {
+        "metrics": [
+          "accuracy",
+          "precision",
+          "recall",
+          "f1",
+          "auc"
+        ]
+      }
+    },
+    {
+      "id": "ClassificationMetrics_2",
+      "type": "ClassificationMetrics",
+      "position": {
+        "x": 2290,
+        "y": 80
+      },
+      "params": {
+        "metrics": [
+          "accuracy",
+          "precision",
+          "recall",
+          "f1",
+          "auc"
+        ]
+      }
+    },
+    {
+      "id": "ClassificationMetrics_3",
+      "type": "ClassificationMetrics",
+      "position": {
+        "x": 2290,
+        "y": 80
+      },
+      "params": {
+        "metrics": [
+          "accuracy",
+          "precision",
+          "recall",
+          "f1",
+          "auc"
+        ]
+      }
+    },
+    {
+      "id": "ROCCurve_1",
+      "type": "ROCCurve",
+      "position": {
+        "x": 2290,
+        "y": 764
+      },
+      "params": {
+        "show_all_models": true,
+        "labels": [
+          "ClassWeight",
+          "Oversampling",
+          "FocalLoss"
+        ]
+      }
+    },
+    {
+      "id": "PrecisionRecallCurve_1",
+      "type": "PrecisionRecallCurve",
+      "position": {
+        "x": 2290,
+        "y": 422
+      },
+      "params": {
+        "show_all_models": true,
+        "labels": [
+          "ClassWeight",
+          "Oversampling",
+          "FocalLoss"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "StandardScaler_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "output",
+      "targetHandle": "features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Dense_A1",
+      "sourceHandle": "train_features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_A1",
+      "target": "Dropout_A1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_A1",
+      "target": "Dense_A2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_A2",
+      "target": "Dense_A3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_A3",
+      "target": "Trainer_A",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_A",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_A",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "Optimizer_A",
+      "target": "Trainer_A",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_A",
+      "target": "Trainer_A",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_A",
+      "target": "ClassificationMetrics_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_A",
+      "target": "ROCCurve_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_A",
+      "target": "PrecisionRecallCurve_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Dense_B1",
+      "sourceHandle": "train_features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_B1",
+      "target": "Dropout_B1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_B1",
+      "target": "Dense_B2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_B2",
+      "target": "Dense_B3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_B3",
+      "target": "Trainer_B",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_B",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_B",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "Optimizer_B",
+      "target": "Trainer_B",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_B",
+      "target": "Trainer_B",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_B",
+      "target": "ClassificationMetrics_2",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_B",
+      "target": "ROCCurve_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_B",
+      "target": "PrecisionRecallCurve_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Dense_C1",
+      "sourceHandle": "train_features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_C1",
+      "target": "Dropout_C1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_C1",
+      "target": "Dense_C2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_C2",
+      "target": "Dense_C3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_C3",
+      "target": "Trainer_C",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_C",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_C",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "Optimizer_C",
+      "target": "Trainer_C",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_C",
+      "target": "Trainer_C",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_C",
+      "target": "ClassificationMetrics_3",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_C",
+      "target": "ROCCurve_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_C",
+      "target": "PrecisionRecallCurve_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "CSVLoader_1",
+      "sourceHandle": "labels",
+      "target": "TrainValSplit_1",
+      "targetHandle": "labels",
+      "id": "auto_csvlabel_CSVLoader_1_TrainValSplit_1"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "train_labels",
+      "target": "Trainer_A",
+      "targetHandle": "train_labels",
+      "id": "auto_label_TrainValSplit_1_Trainer_A"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "val_labels",
+      "target": "Trainer_A",
+      "targetHandle": "val_labels",
+      "id": "auto_vlabel_TrainValSplit_1_Trainer_A"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "train_labels",
+      "target": "Trainer_B",
+      "targetHandle": "train_labels",
+      "id": "auto_label_TrainValSplit_1_Trainer_B"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "val_labels",
+      "target": "Trainer_B",
+      "targetHandle": "val_labels",
+      "id": "auto_vlabel_TrainValSplit_1_Trainer_B"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "train_labels",
+      "target": "Trainer_C",
+      "targetHandle": "train_labels",
+      "id": "auto_label_TrainValSplit_1_Trainer_C"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "val_labels",
+      "target": "Trainer_C",
+      "targetHandle": "val_labels",
+      "id": "auto_vlabel_TrainValSplit_1_Trainer_C"
+    },
+    {
+      "source": "CSVLoader_1",
+      "sourceHandle": "dataset",
+      "target": "StandardScaler_1",
+      "targetHandle": "input",
+      "id": "restore_CSVLoader_1_StandardScaler_1"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "id": 102,
+    "title": "Connect Nodes in Series",
+    "title_ko": "노드 직렬 연결 기초",
+    "category": "tutorial",
+    "difficulty": "beginner",
+    "description": "Learn to connect nodes: CSVLoader → StandardScaler → DataInspector.",
+    "description_ko": "CSVLoader → StandardScaler → DataInspector 순서로 노드를 연결하는 기본 패턴을 익힙니다.",
+    "tags": [
+      "연결",
+      "scaler",
+      "기초"
+    ],
+    "estimated_time": "30초",
+    "learning_objectives": [
+      "노드 출력 포트 → 입력 포트 연결 방법",
+      "StandardScaler가 데이터를 어떻게 변환하는지 확인"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "Iris 데이터를 로드합니다."
+      },
+      {
+        "step": 2,
+        "node": "StandardScaler_1",
+        "text": "평균=0, 분산=1로 정규화합니다."
+      },
+      {
+        "step": 3,
+        "node": "DataInspector_1",
+        "text": "정규화된 결과를 확인합니다. 값이 -2~2 범위로 바뀌었는지 보세요."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/iris.csv",
+        "target_column": "species"
+      }
+    },
+    {
+      "id": "StandardScaler_1",
+      "type": "StandardScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "DataInspector_1",
+      "type": "DataInspector",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "StandardScaler_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "StandardScaler_1",
+      "target": "DataInspector_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    }
+  ]
+}

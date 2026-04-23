@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "id": 50,
+    "title": "Dimensionality Reduction Visualization (PCA + t-SNE)",
+    "title_ko": "차원 축소 시각화 (PCA + t-SNE)",
+    "category": "unsupervised",
+    "difficulty": "beginner",
+    "description": "Visualize high-dimensional data in 2D using PCA for initial reduction followed by t-SNE for non-linear projection.",
+    "description_ko": "PCA로 1차 차원 축소 후 t-SNE로 비선형 투영하여 고차원 데이터를 2D로 시각화합니다. 두 기법의 차이와 결합 효과를 비교합니다.",
+    "tags": [
+      "tabular",
+      "unsupervised",
+      "pca",
+      "t-sne",
+      "visualization",
+      "dimensionality-reduction",
+      "beginner"
+    ],
+    "estimated_time": "2~3분",
+    "dataset_info": {
+      "name": "Digits / Wine",
+      "source": "sklearn built-in",
+      "samples": 1797,
+      "features": 64,
+      "classes": null
+    },
+    "learning_objectives": [
+      "PCA(주성분 분석)의 선형 차원 축소 원리 이해",
+      "t-SNE의 비선형 차원 축소와 근접 보존 특성",
+      "PCA → t-SNE 파이프라인의 장점 (속도 + 품질)",
+      "perplexity 파라미터가 t-SNE 결과에 미치는 영향",
+      "차원 축소 시각화로 데이터 구조를 탐색하는 방법"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "Digits 데이터셋을 로드합니다. 8x8 손글씨 이미지가 64차원 벡터로 표현됩니다."
+      },
+      {
+        "step": 2,
+        "node": "StandardScaler_1",
+        "text": "특성을 표준화합니다. PCA와 t-SNE 모두 스케일에 민감하므로 필수입니다."
+      },
+      {
+        "step": 3,
+        "node": "PCA_1",
+        "text": "64차원 → 10차원으로 축소합니다. t-SNE 전에 PCA를 적용하면 노이즈 제거와 속도 향상 효과가 있습니다."
+      },
+      {
+        "step": 4,
+        "node": "tSNEViewer_1",
+        "text": "10차원 → 2차원으로 비선형 투영합니다. 유사한 숫자끼리 모이는 클러스터를 관찰하세요."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/digits.csv",
+        "target_column": "",
+        "separator": ","
+      }
+    },
+    {
+      "id": "StandardScaler_1",
+      "type": "StandardScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "PCA_1",
+      "type": "PCA",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "n_components": 10,
+        "whiten": false
+      }
+    },
+    {
+      "id": "tSNEViewer_1",
+      "type": "tSNEViewer",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "perplexity": 30,
+        "n_iter": 1000,
+        "n_components": 2,
+        "random_state": 42
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "StandardScaler_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "StandardScaler_1",
+      "target": "PCA_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "PCA_1",
+      "target": "tSNEViewer_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    }
+  ]
+}

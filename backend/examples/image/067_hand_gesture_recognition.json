@@ -1,0 +1,402 @@
+{
+  "meta": {
+    "id": 67,
+    "title": "Hand Gesture Recognition",
+    "title_ko": "손 제스처 인식",
+    "category": "image",
+    "difficulty": "intermediate",
+    "description": "Recognize hand gestures from images using a 3-layer CNN with Flatten and Dense layers.",
+    "description_ko": "3개의 Conv2D 레이어와 Flatten, Dense를 사용하여 손 제스처 이미지를 분류합니다. Flatten과 GlobalAveragePooling2D의 차이를 비교합니다.",
+    "tags": [
+      "gesture",
+      "hand",
+      "recognition",
+      "cnn",
+      "flatten"
+    ],
+    "estimated_time": "15분",
+    "dataset_info": {
+      "name": "Hand Gesture Dataset",
+      "source": "custom folder",
+      "samples": 6000,
+      "features": "64x64x3",
+      "classes": 6
+    },
+    "learning_objectives": [
+      "Flatten을 사용한 CNN 분류 구조 이해",
+      "Flatten vs GlobalAveragePooling2D 비교",
+      "손 제스처 인식을 위한 CNN 구성",
+      "Flatten의 파라미터 수 증가 문제 인식",
+      "실시간 인식을 위한 경량 모델 설계"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "ImageFolder_1",
+        "text": "손 제스처 이미지를 로드합니다. 가위바위보 등 6가지 제스처 폴더로 구성됩니다."
+      },
+      {
+        "step": 2,
+        "node": "TrainValSplit_1",
+        "text": "학습(80%)과 검증(20%)으로 분할합니다."
+      },
+      {
+        "step": 3,
+        "node": "Conv2D_1",
+        "text": "32개 필터로 손의 윤곽과 손가락 형태를 감지합니다."
+      },
+      {
+        "step": 4,
+        "node": "Conv2D_3",
+        "text": "128개 필터로 제스처별 고유 패턴을 학습합니다."
+      },
+      {
+        "step": 5,
+        "node": "Flatten_1",
+        "text": "Flatten: 3D 특징 맵을 1D 벡터로 펼칩니다. GAP보다 파라미터가 많지만 공간 정보를 보존합니다."
+      },
+      {
+        "step": 6,
+        "node": "Dense_1",
+        "text": "128개 뉴런 은닉층으로 제스처 특징을 종합합니다."
+      },
+      {
+        "step": 7,
+        "node": "Dense_2",
+        "text": "6개 제스처에 대한 softmax 출력입니다."
+      },
+      {
+        "step": 8,
+        "node": "Trainer_1",
+        "text": "학습 후 Model Summary에서 Flatten 이후 파라미터 수를 확인해 보세요."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "ImageFolder_1",
+      "type": "ImageFolder",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "folder_path": "datasets/hand_gestures",
+        "image_size": [
+          64,
+          64
+        ],
+        "color_mode": "rgb"
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "test_ratio": 0.0,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Conv2D_1",
+      "type": "Conv2D",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "filters": 32,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "MaxPooling2D_1",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Conv2D_2",
+      "type": "Conv2D",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "filters": 64,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "MaxPooling2D_2",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Conv2D_3",
+      "type": "Conv2D",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "filters": 128,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "MaxPooling2D_3",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Flatten_1",
+      "type": "Flatten",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 2010,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_1",
+      "type": "Dropout",
+      "position": {
+        "x": 2290,
+        "y": 80
+      },
+      "params": {
+        "rate": 0.5
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 2570,
+        "y": 80
+      },
+      "params": {
+        "units": 6,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 2850,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 2850,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 2850,
+        "y": 80
+      },
+      "params": {
+        "epochs": 20,
+        "batch_size": 32,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 3130,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "AccuracyCurve_1",
+      "type": "AccuracyCurve",
+      "position": {
+        "x": 3130,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Conv2D_1",
+      "target": "MaxPooling2D_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_1",
+      "target": "Conv2D_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_2",
+      "target": "MaxPooling2D_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_2",
+      "target": "Conv2D_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_3",
+      "target": "MaxPooling2D_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_3",
+      "target": "Flatten_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Flatten_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dropout_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "AccuracyCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

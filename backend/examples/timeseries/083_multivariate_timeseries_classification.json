@@ -1,0 +1,256 @@
+{
+  "meta": {
+    "id": 83,
+    "title": "Multivariate Time Series Classification",
+    "title_ko": "다변량 시계열 분류",
+    "category": "timeseries",
+    "difficulty": "intermediate",
+    "description": "Classify multivariate time series data (e.g., human activity recognition) using LSTM with StandardScaler preprocessing.",
+    "description_ko": "다변량 시계열 데이터(예: 인간 활동 인식)를 StandardScaler로 정규화한 뒤 LSTM으로 분류합니다.",
+    "tags": [
+      "time-series",
+      "classification",
+      "lstm",
+      "multivariate"
+    ],
+    "estimated_time": "5~8분",
+    "dataset_info": {
+      "name": "HAR (Human Activity Recognition)",
+      "source": "UCI Machine Learning Repository",
+      "samples": 10299,
+      "features": 9,
+      "classes": 6
+    },
+    "learning_objectives": [
+      "다변량 시계열 데이터의 구조 이해 (다채널 입력)",
+      "StandardScaler로 센서 데이터를 정규화하는 이유",
+      "LSTM으로 시계열 패턴을 학습해 활동을 분류하는 방법",
+      "softmax 출력으로 다중 클래스 분류 수행"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "가속도계, 자이로스코프 등 9개 센서 축의 시계열 데이터와 활동 레이블(6종)을 로드합니다."
+      },
+      {
+        "step": 2,
+        "node": "StandardScaler_1",
+        "text": "센서마다 스케일이 다르므로 StandardScaler로 Z-score 정규화합니다."
+      },
+      {
+        "step": 3,
+        "node": "TrainValSplit_1",
+        "text": "학습(80%)과 검증(20%)으로 분할합니다."
+      },
+      {
+        "step": 4,
+        "node": "LSTM_1",
+        "text": "128 유닛 LSTM이 시계열 패턴을 학습합니다. return_sequences=false로 마지막 타임스텝 출력만 사용합니다."
+      },
+      {
+        "step": 5,
+        "node": "Dense_1",
+        "text": "6개 뉴런 softmax 출력층으로 활동 종류를 분류합니다."
+      },
+      {
+        "step": 6,
+        "node": "Trainer_1",
+        "text": "Run 버튼을 눌러 학습을 시작하세요. Loss와 Accuracy 변화를 관찰하세요."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/har_timeseries.csv",
+        "target_column": "activity"
+      }
+    },
+    {
+      "id": "StandardScaler_1",
+      "type": "StandardScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2
+      }
+    },
+    {
+      "id": "LSTM_1",
+      "type": "LSTM",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "units": 128,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "units": 6,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 890,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 890,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "epochs": 30,
+        "batch_size": 64,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1170,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "AccuracyCurve_1",
+      "type": "AccuracyCurve",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "StandardScaler_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "StandardScaler_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "output",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "LSTM_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "AccuracyCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

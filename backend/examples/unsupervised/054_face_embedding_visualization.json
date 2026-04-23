@@ -1,0 +1,135 @@
+{
+  "meta": {
+    "id": 54,
+    "title": "Face Embedding Visualization",
+    "title_ko": "얼굴 임베딩 시각화",
+    "category": "unsupervised",
+    "difficulty": "intermediate",
+    "description": "Extract face embeddings using a pretrained CNN model and visualize the embedding space with UMAP to see identity clusters.",
+    "description_ko": "사전학습된 CNN 모델로 얼굴 임베딩을 추출하고, UMAP으로 임베딩 공간을 시각화하여 인물별 클러스터를 확인합니다.",
+    "tags": [
+      "image",
+      "unsupervised",
+      "embedding",
+      "pretrained",
+      "umap",
+      "face",
+      "intermediate"
+    ],
+    "estimated_time": "5~10분",
+    "dataset_info": {
+      "name": "Face Images (LFW subset)",
+      "source": "LFW / custom",
+      "samples": 2000,
+      "features": "224x224x3",
+      "classes": null
+    },
+    "learning_objectives": [
+      "사전학습 모델(PretrainedModel)을 특징 추출기로 활용하는 방법",
+      "이미지 임베딩(embedding)의 개념과 활용",
+      "UMAP으로 고차원 임베딩을 2D로 시각화하는 기법",
+      "전이학습에서 feature extraction vs fine-tuning 차이",
+      "얼굴 인식 시스템의 기본 원리 (임베딩 거리 비교)"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "ImageFolder_1",
+        "text": "얼굴 이미지를 로드합니다. 서브폴더별로 인물이 구분되어 있습니다."
+      },
+      {
+        "step": 2,
+        "node": "PretrainedModel_1",
+        "text": "MobileNetV2 사전학습 모델로 이미지 특징을 추출합니다. include_top=false로 분류 헤드를 제거합니다."
+      },
+      {
+        "step": 3,
+        "node": "GlobalAveragePooling2D_1",
+        "text": "특징 맵을 글로벌 평균 풀링으로 1D 벡터로 변환합니다. 이것이 얼굴 임베딩입니다."
+      },
+      {
+        "step": 4,
+        "node": "UMAPViewer_1",
+        "text": "UMAP으로 임베딩을 2D 공간에 투영합니다. 같은 인물의 이미지가 가까이 모이는지 확인하세요."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "ImageFolder_1",
+      "type": "ImageFolder",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "folder_path": "datasets/faces_lfw/",
+        "image_size": [
+          224,
+          224
+        ],
+        "color_mode": "rgb",
+        "normalize": true
+      }
+    },
+    {
+      "id": "PretrainedModel_1",
+      "type": "PretrainedModel",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "model_name": "MobileNetV2",
+        "weights": "imagenet",
+        "include_top": false,
+        "trainable": false
+      }
+    },
+    {
+      "id": "GlobalAveragePooling2D_1",
+      "type": "GlobalAveragePooling2D",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "UMAPViewer_1",
+      "type": "UMAPViewer",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "n_neighbors": 15,
+        "min_dist": 0.1,
+        "n_components": 2,
+        "metric": "cosine",
+        "random_state": 42
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "ImageFolder_1",
+      "target": "PretrainedModel_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "PretrainedModel_1",
+      "target": "GlobalAveragePooling2D_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "GlobalAveragePooling2D_1",
+      "target": "UMAPViewer_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    }
+  ]
+}

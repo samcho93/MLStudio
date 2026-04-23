@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "id": 129,
+    "title": "View Data Distribution",
+    "title_ko": "데이터 분포 히스토그램 보기",
+    "category": "tutorial",
+    "difficulty": "beginner",
+    "description": "Visualize feature distributions with histograms and box plots.",
+    "description_ko": "DataDistribution 노드로 각 특성의 분포를 히스토그램으로 시각화합니다.",
+    "tags": [
+      "distribution",
+      "히스토그램",
+      "시각화"
+    ],
+    "estimated_time": "30초",
+    "learning_objectives": [
+      "데이터 분포를 시각적으로 확인하는 방법",
+      "정규분포 vs 편향된 분포 구분",
+      "이상치(outlier) 시각적 탐지"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "데이터를 로드합니다."
+      },
+      {
+        "step": 2,
+        "node": "DataDistribution_1",
+        "text": "각 특성의 히스토그램이 표시됩니다. 분포 모양을 확인하세요."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/iris.csv",
+        "target_column": "species"
+      }
+    },
+    {
+      "id": "DataDistribution_1",
+      "type": "DataDistribution",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "DataDistribution_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    }
+  ]
+}

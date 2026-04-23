@@ -1,0 +1,163 @@
+{
+  "meta": {
+    "id": 82,
+    "title": "Sentiment Intensity Regression",
+    "title_ko": "감성 강도 회귀",
+    "category": "nlp",
+    "difficulty": "intermediate",
+    "description": "Predict a continuous sentiment intensity score from text using an LSTM-based regression model.",
+    "description_ko": "LSTM 기반 회귀 모델을 사용하여 텍스트의 연속적인 감성 강도 점수를 예측합니다.",
+    "tags": [
+      "nlp",
+      "sentiment-regression",
+      "lstm",
+      "embedding",
+      "regression"
+    ],
+    "estimated_time": "15min",
+    "dataset_info": {
+      "name": "SemEval Sentiment Intensity",
+      "source": "semeval-2018-valence",
+      "samples": 12000,
+      "features": "text (tweets and short texts)",
+      "target": "intensity (0.0 ~ 1.0, continuous sentiment score)"
+    },
+    "learning_objectives": [
+      "분류와 회귀의 차이를 이해하고 감성 분석에서 회귀를 적용하는 이유를 학습한다",
+      "회귀 태스크에서의 손실 함수(MSE)와 활성화 함수(linear/sigmoid) 선택을 이해한다",
+      "연속적인 감성 점수의 장점(세밀한 감성 표현)을 파악한다",
+      "MAE/MSE 메트릭으로 회귀 모델의 성능을 평가하는 방법을 익힌다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "csv_loader_01",
+        "text": "감성 강도 데이터셋을 로드합니다. 텍스트와 0~1 범위의 감성 점수를 포함합니다."
+      },
+      {
+        "step": 2,
+        "node": "Embedding",
+        "text": "10000개 어휘를 64차원 벡터로 변환합니다. 짧은 텍스트이므로 max_length=100으로 설정합니다."
+      },
+      {
+        "step": 3,
+        "node": "LSTM",
+        "text": "64 유닛의 LSTM으로 텍스트의 감성 패턴을 학습합니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense",
+        "text": "1개 유닛과 sigmoid 활성화로 0~1 범위의 감성 점수를 출력합니다."
+      },
+      {
+        "step": 5,
+        "node": "Trainer",
+        "text": "MSE(평균 제곱 오차) 손실 함수로 20 에폭 학습합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "csv_loader_01",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/sentiment_intensity.csv",
+        "text_column": "text",
+        "label_column": "intensity",
+        "tokenize": true,
+        "max_vocab": 10000,
+        "max_length": 100,
+        "target_column": ""
+      }
+    },
+    {
+      "id": "embedding_01",
+      "type": "Embedding",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "vocab_size": 10000,
+        "embedding_dim": 64,
+        "max_length": 100
+      }
+    },
+    {
+      "id": "lstm_01",
+      "type": "LSTM",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "units": 64,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "dense_01",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 1,
+        "activation": "sigmoid"
+      }
+    },
+    {
+      "id": "trainer_01",
+      "type": "Trainer",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "epochs": 20,
+        "batch_size": 32,
+        "optimizer": "adam",
+        "learning_rate": 0.001,
+        "loss": "mse",
+        "metrics": [
+          "mae"
+        ],
+        "validation_split": 0.2,
+        "device": "auto"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "embedding_01",
+      "target": "lstm_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "lstm_01",
+      "target": "dense_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "dense_01",
+      "target": "trainer_01",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "dataset",
+      "target": "embedding_01",
+      "targetHandle": "input",
+      "id": "restore_csv_loader_01_embedding_01"
+    }
+  ]
+}

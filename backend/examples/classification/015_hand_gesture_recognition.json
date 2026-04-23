@@ -1,0 +1,286 @@
+{
+  "meta": {
+    "id": 15,
+    "title": "Hand Gesture Recognition",
+    "title_ko": "손동작 인식",
+    "category": "classification",
+    "difficulty": "beginner",
+    "description": "Classify hand gestures from sensor data using a 3-layer Dense network.",
+    "description_ko": "센서 데이터로부터 손동작을 분류합니다. Dense 레이어만으로 간단한 분류기를 만드는 기본 예제입니다.",
+    "tags": [
+      "tabular",
+      "gesture",
+      "sensor",
+      "dense",
+      "classification"
+    ],
+    "estimated_time": "3분",
+    "dataset_info": {
+      "name": "Hand Gesture Sensor",
+      "source": "custom / UCI",
+      "samples": 5000,
+      "features": 32,
+      "classes": 5
+    },
+    "learning_objectives": [
+      "센서 데이터 기반 분류 모델 구성",
+      "Dense 레이어 3개로 충분한 성능을 내는 경우",
+      "다중 클래스 분류의 기본 파이프라인",
+      "학습률과 에포크 수 조정의 효과"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "손동작 센서 데이터를 로드합니다. 가속도계/자이로스코프 등의 특성이 포함됩니다."
+      },
+      {
+        "step": 2,
+        "node": "TrainValSplit_1",
+        "text": "학습(80%)과 검증(20%)으로 분할합니다."
+      },
+      {
+        "step": 3,
+        "node": "Dense_1",
+        "text": "128개 뉴런으로 센서 특성 간의 패턴을 학습합니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense_2",
+        "text": "64개 뉴런의 중간 은닉층."
+      },
+      {
+        "step": 5,
+        "node": "Dense_3",
+        "text": "32개 뉴런의 세 번째 은닉층."
+      },
+      {
+        "step": 6,
+        "node": "Dense_4",
+        "text": "5개 뉴런 + softmax: 5종 손동작의 확률을 출력합니다."
+      },
+      {
+        "step": 7,
+        "node": "Trainer_1",
+        "text": "20 에포크 학습 후 Loss와 Accuracy 변화를 관찰하세요."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/hand_gestures.csv",
+        "target_column": "gesture",
+        "separator": ","
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "test_ratio": 0.0,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_3",
+      "type": "Dense",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "units": 32,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_4",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 5,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 1170,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 1170,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "epochs": 20,
+        "batch_size": 32,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1450,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "AccuracyCurve_1",
+      "type": "AccuracyCurve",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Dense_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_3",
+      "target": "Dense_4",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_4",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "AccuracyCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

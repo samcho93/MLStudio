@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "id": 120,
+    "title": "Load Image Dataset",
+    "title_ko": "이미지 폴더 데이터 로드",
+    "category": "tutorial",
+    "difficulty": "beginner",
+    "description": "Load images from folders where each subfolder is a class.",
+    "description_ko": "ImageFolder 노드로 폴더 구조의 이미지 데이터셋을 로드합니다.",
+    "tags": [
+      "image",
+      "image-folder",
+      "데이터로드"
+    ],
+    "estimated_time": "30초",
+    "learning_objectives": [
+      "ImageFolder: 하위폴더명 = 클래스명",
+      "image_size로 이미지 크기 통일",
+      "이미지 데이터를 DataInspector로 확인"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "ImageFolder_1",
+        "text": "dogs_vs_cats 폴더를 로드합니다. cat/, dog/ 하위폴더가 각각 하나의 클래스입니다."
+      },
+      {
+        "step": 2,
+        "node": "DataInspector_1",
+        "text": "로드된 이미지의 shape, 클래스 수, 샘플 수를 확인합니다."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "ImageFolder_1",
+      "type": "ImageFolder",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "folder_path": "datasets/dogs_vs_cats",
+        "image_size": 64
+      }
+    },
+    {
+      "id": "DataInspector_1",
+      "type": "DataInspector",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "ImageFolder_1",
+      "target": "DataInspector_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    }
+  ]
+}

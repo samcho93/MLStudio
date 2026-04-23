@@ -1,0 +1,238 @@
+{
+  "meta": {
+    "id": 118,
+    "title": "Binary Classification Basics",
+    "title_ko": "이진 분류 기초 (생존 예측)",
+    "category": "tutorial",
+    "difficulty": "beginner",
+    "description": "Build a binary classifier for Titanic survival prediction.",
+    "description_ko": "타이타닉 데이터로 생존/사망 이진 분류를 학습합니다. sigmoid 출력을 사용합니다.",
+    "tags": [
+      "binary",
+      "sigmoid",
+      "이진분류"
+    ],
+    "estimated_time": "1~2분",
+    "learning_objectives": [
+      "이진 분류에서는 출력 뉴런 1개 + sigmoid 사용",
+      "binary_crossentropy 손실 함수",
+      "LabelEncoder로 문자열 전처리"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "타이타닉 데이터를 로드합니다."
+      },
+      {
+        "step": 2,
+        "node": "LabelEncoder_1",
+        "text": "문자열 컬럼을 숫자로 변환합니다."
+      },
+      {
+        "step": 3,
+        "node": "Dense_2",
+        "text": "출력 1개 + sigmoid: 생존 확률을 0~1로 출력합니다."
+      },
+      {
+        "step": 4,
+        "node": "LossFunction_1",
+        "text": "binary_crossentropy: 이진 분류의 표준 손실 함수입니다."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/titanic.csv",
+        "target_column": "survived"
+      }
+    },
+    {
+      "id": "LabelEncoder_1",
+      "type": "LabelEncoder",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "StandardScaler_1",
+      "type": "StandardScaler",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 50,
+        "y": 480
+      },
+      "params": {
+        "units": 32,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 330,
+        "y": 480
+      },
+      "params": {
+        "units": 1,
+        "activation": "sigmoid"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 610,
+        "y": 480
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 610,
+        "y": 880
+      },
+      "params": {
+        "type": "binary_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "epochs": 30,
+        "batch_size": 16,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "LabelEncoder_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "LabelEncoder_1",
+      "target": "StandardScaler_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "StandardScaler_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "output",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

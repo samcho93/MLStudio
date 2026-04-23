@@ -1,0 +1,311 @@
+{
+  "meta": {
+    "id": 86,
+    "title": "ECG Anomaly Detection (LSTM Autoencoder)",
+    "title_ko": "심전도(ECG) 이상 감지",
+    "category": "timeseries",
+    "difficulty": "advanced",
+    "description": "Detect abnormal heartbeat patterns in ECG signals using an LSTM autoencoder that learns to reconstruct normal patterns.",
+    "description_ko": "LSTM 오토인코더로 정상 심전도 패턴을 학습한 뒤, 복원 오차가 큰 구간을 이상 신호로 감지합니다.",
+    "tags": [
+      "time-series",
+      "anomaly-detection",
+      "autoencoder",
+      "lstm",
+      "ecg",
+      "medical"
+    ],
+    "estimated_time": "8~12분",
+    "dataset_info": {
+      "name": "ECG5000",
+      "source": "UCR Time Series Archive",
+      "samples": 5000,
+      "features": 140
+    },
+    "learning_objectives": [
+      "LSTM 오토인코더의 인코더-디코더 구조 이해",
+      "return_sequences 설정으로 시퀀스 복원 모델 구성",
+      "MSE 복원 오차를 이상 탐지 임계값으로 활용하는 원리",
+      "비지도 이상 탐지와 지도 분류의 차이점"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "ECG 심전도 데이터를 로드합니다. 각 행이 하나의 심박 시퀀스(140 타임스텝)입니다."
+      },
+      {
+        "step": 2,
+        "node": "StandardScaler_1",
+        "text": "StandardScaler로 신호 크기를 정규화합니다."
+      },
+      {
+        "step": 3,
+        "node": "TrainValSplit_1",
+        "text": "학습/검증 분할. 정상 데이터만으로 학습하여 이상 패턴을 구별합니다."
+      },
+      {
+        "step": 4,
+        "node": "LSTM_1",
+        "text": "인코더 LSTM (64유닛, return_sequences=false): 시퀀스를 압축된 잠재 벡터로 인코딩합니다."
+      },
+      {
+        "step": 5,
+        "node": "Dense_1",
+        "text": "잠재 공간 표현(32유닛). 시퀀스의 핵심 특징을 담는 병목 레이어입니다."
+      },
+      {
+        "step": 6,
+        "node": "Dense_2",
+        "text": "디코더 Dense(64유닛)로 잠재 벡터를 확장합니다."
+      },
+      {
+        "step": 7,
+        "node": "LSTM_2",
+        "text": "디코더 LSTM (140유닛, return_sequences=true): 원본 시퀀스를 복원합니다."
+      },
+      {
+        "step": 8,
+        "node": "Dense_3",
+        "text": "출력 Dense(units=1, linear): 각 타임스텝의 신호값을 복원합니다."
+      },
+      {
+        "step": 9,
+        "node": "Trainer_1",
+        "text": "MSE 손실로 학습합니다. 정상 패턴은 잘 복원, 이상 패턴은 복원 오차가 커집니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/ecg5000.csv",
+        "target_column": "__self__"
+      }
+    },
+    {
+      "id": "StandardScaler_1",
+      "type": "StandardScaler",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2
+      }
+    },
+    {
+      "id": "LSTM_1",
+      "type": "LSTM",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "units": 64,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "units": 32,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_2",
+      "type": "Dense",
+      "position": {
+        "x": 610,
+        "y": 422
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "LSTM_2",
+      "type": "LSTM",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 140,
+        "return_sequences": true
+      }
+    },
+    {
+      "id": "Dense_3",
+      "type": "Dense",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "units": 1,
+        "activation": "linear"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 1450,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 1450,
+        "y": 764
+      },
+      "params": {
+        "type": "mse"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "epochs": 50,
+        "batch_size": 32,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "StandardScaler_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "StandardScaler_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "output",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "LSTM_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Dense_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_2",
+      "target": "LSTM_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "LSTM_2",
+      "target": "Dense_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_3",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

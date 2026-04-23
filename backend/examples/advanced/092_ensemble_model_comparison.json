@@ -1,0 +1,734 @@
+{
+  "meta": {
+    "id": 92,
+    "title": "Ensemble Model Comparison",
+    "title_ko": "앙상블 모델 비교",
+    "category": "advanced",
+    "difficulty": "advanced",
+    "description": "Train three different model architectures (shallow Dense, deep Dense, CNN) on the same dataset in parallel and compare their performance metrics side by side.",
+    "description_ko": "동일한 데이터셋에서 세 가지 모델(얕은 Dense, 깊은 Dense, CNN)을 병렬로 학습하고 성능 지표를 비교합니다.",
+    "tags": [
+      "ensemble",
+      "model-comparison",
+      "parallel-training",
+      "classification",
+      "metrics"
+    ],
+    "estimated_time": "20분",
+    "dataset_info": {
+      "name": "Fashion MNIST",
+      "source": "tf.keras.datasets",
+      "samples": 70000,
+      "features": "28x28x1",
+      "classes": 10
+    },
+    "learning_objectives": [
+      "동일 데이터에 대한 다중 모델 병렬 학습 파이프라인을 구성한다",
+      "모델 아키텍처에 따른 성능 차이를 비교 분석한다",
+      "Classification Metrics를 활용해 모델별 정밀도/재현율을 평가한다",
+      "모델 복잡도와 정확도의 관계를 이해한다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "NumpyInput_1",
+        "text": "Fashion MNIST 데이터셋을 로드합니다. 세 모델이 공유할 입력 데이터입니다."
+      },
+      {
+        "step": 2,
+        "node": "TrainValSplit_1",
+        "text": "학습/검증/테스트를 8:1:1로 분리합니다. 세 모델이 동일한 분할을 사용합니다."
+      },
+      {
+        "step": 3,
+        "node": "Flatten_1",
+        "text": "모델 A (얕은 Dense): 이미지를 1D로 펼칩니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense_A1",
+        "text": "모델 A: 128 유닛 단일 Dense 레이어. 가장 단순한 구조입니다."
+      },
+      {
+        "step": 5,
+        "node": "Flatten_2",
+        "text": "모델 B (깊은 Dense): 이미지를 1D로 펼칩니다."
+      },
+      {
+        "step": 6,
+        "node": "Dense_B1",
+        "text": "모델 B: 256→128→64 유닛의 깊은 Dense 네트워크. Dropout으로 과적합을 방지합니다."
+      },
+      {
+        "step": 7,
+        "node": "Conv2D_C1",
+        "text": "모델 C (CNN): 합성곱 레이어로 공간 정보를 활용합니다."
+      },
+      {
+        "step": 8,
+        "node": "ClassificationMetrics_1",
+        "text": "세 모델의 Accuracy, Precision, Recall, F1을 비교합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "NumpyInput_1",
+      "type": "NumpyInput",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "dataset": "fashion_mnist"
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "train_ratio": 0.8,
+        "val_ratio": 0.1,
+        "test_ratio": 0.1,
+        "shuffle": true,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Flatten_1",
+      "type": "Flatten",
+      "position": {
+        "x": 610,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "Dense_A1",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_A2",
+      "type": "Dense",
+      "position": {
+        "x": 1170,
+        "y": 422
+      },
+      "params": {
+        "units": 10,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_A",
+      "type": "Optimizer",
+      "position": {
+        "x": 1450,
+        "y": 1106
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_A",
+      "type": "LossFunction",
+      "position": {
+        "x": 1450,
+        "y": 1448
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_A",
+      "type": "Trainer",
+      "position": {
+        "x": 1450,
+        "y": 764
+      },
+      "params": {
+        "epochs": 15,
+        "batch_size": 64,
+        "framework": "pytorch",
+        "model_name": "Model_A_Shallow"
+      }
+    },
+    {
+      "id": "Flatten_2",
+      "type": "Flatten",
+      "position": {
+        "x": 610,
+        "y": 764
+      },
+      "params": {}
+    },
+    {
+      "id": "Dense_B1",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 422
+      },
+      "params": {
+        "units": 256,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_B1",
+      "type": "Dropout",
+      "position": {
+        "x": 1170,
+        "y": 764
+      },
+      "params": {
+        "rate": 0.3
+      }
+    },
+    {
+      "id": "Dense_B2",
+      "type": "Dense",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_B3",
+      "type": "Dense",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dense_B4",
+      "type": "Dense",
+      "position": {
+        "x": 2010,
+        "y": 80
+      },
+      "params": {
+        "units": 10,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_B",
+      "type": "Optimizer",
+      "position": {
+        "x": 2290,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_B",
+      "type": "LossFunction",
+      "position": {
+        "x": 2290,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_B",
+      "type": "Trainer",
+      "position": {
+        "x": 2290,
+        "y": 80
+      },
+      "params": {
+        "epochs": 15,
+        "batch_size": 64,
+        "framework": "pytorch",
+        "model_name": "Model_B_Deep"
+      }
+    },
+    {
+      "id": "Conv2D_C1",
+      "type": "Conv2D",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "filters": 32,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "MaxPooling2D_C1",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 890,
+        "y": 764
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Conv2D_C2",
+      "type": "Conv2D",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "filters": 64,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "MaxPooling2D_C2",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 1450,
+        "y": 422
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "GlobalAveragePooling2D_C",
+      "type": "GlobalAveragePooling2D",
+      "position": {
+        "x": 1730,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "Dense_C1",
+      "type": "Dense",
+      "position": {
+        "x": 2010,
+        "y": 422
+      },
+      "params": {
+        "units": 10,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_C",
+      "type": "Optimizer",
+      "position": {
+        "x": 2290,
+        "y": 764
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_C",
+      "type": "LossFunction",
+      "position": {
+        "x": 2290,
+        "y": 1106
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_C",
+      "type": "Trainer",
+      "position": {
+        "x": 2290,
+        "y": 422
+      },
+      "params": {
+        "epochs": 15,
+        "batch_size": 64,
+        "framework": "pytorch",
+        "model_name": "Model_C_CNN"
+      }
+    },
+    {
+      "id": "ClassificationMetrics_1",
+      "type": "ClassificationMetrics",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {
+        "metrics": [
+          "accuracy",
+          "precision",
+          "recall",
+          "f1"
+        ]
+      }
+    },
+    {
+      "id": "ClassificationMetrics_2",
+      "type": "ClassificationMetrics",
+      "position": {
+        "x": 2570,
+        "y": 80
+      },
+      "params": {
+        "metrics": [
+          "accuracy",
+          "precision",
+          "recall",
+          "f1"
+        ]
+      }
+    },
+    {
+      "id": "ClassificationMetrics_3",
+      "type": "ClassificationMetrics",
+      "position": {
+        "x": 2570,
+        "y": 80
+      },
+      "params": {
+        "metrics": [
+          "accuracy",
+          "precision",
+          "recall",
+          "f1"
+        ]
+      }
+    },
+    {
+      "id": "ConfusionMatrix_1",
+      "type": "ConfusionMatrix",
+      "position": {
+        "x": 1730,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "ConfusionMatrix_2",
+      "type": "ConfusionMatrix",
+      "position": {
+        "x": 2570,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "ConfusionMatrix_3",
+      "type": "ConfusionMatrix",
+      "position": {
+        "x": 2570,
+        "y": 422
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "NumpyInput_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Flatten_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Flatten_1",
+      "target": "Dense_A1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_A1",
+      "target": "Dense_A2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_A2",
+      "target": "Trainer_A",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_A",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_A",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "Optimizer_A",
+      "target": "Trainer_A",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_A",
+      "target": "Trainer_A",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_A",
+      "target": "ClassificationMetrics_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_A",
+      "target": "ConfusionMatrix_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Flatten_2",
+      "sourceHandle": "train_features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Flatten_2",
+      "target": "Dense_B1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_B1",
+      "target": "Dropout_B1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_B1",
+      "target": "Dense_B2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_B2",
+      "target": "Dense_B3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_B3",
+      "target": "Dense_B4",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_B4",
+      "target": "Trainer_B",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_B",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_B",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "Optimizer_B",
+      "target": "Trainer_B",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_B",
+      "target": "Trainer_B",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_B",
+      "target": "ClassificationMetrics_2",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_B",
+      "target": "ConfusionMatrix_2",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Conv2D_C1",
+      "sourceHandle": "train_features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_C1",
+      "target": "MaxPooling2D_C1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_C1",
+      "target": "Conv2D_C2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_C2",
+      "target": "MaxPooling2D_C2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_C2",
+      "target": "GlobalAveragePooling2D_C",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "GlobalAveragePooling2D_C",
+      "target": "Dense_C1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_C1",
+      "target": "Trainer_C",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_C",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_C",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "Optimizer_C",
+      "target": "Trainer_C",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_C",
+      "target": "Trainer_C",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_C",
+      "target": "ClassificationMetrics_3",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_C",
+      "target": "ConfusionMatrix_3",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "NumpyInput_1",
+      "sourceHandle": "train_labels",
+      "target": "TrainValSplit_1",
+      "targetHandle": "labels",
+      "id": "auto_nplabel_NumpyInput_1_TrainValSplit_1"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "train_labels",
+      "target": "Trainer_A",
+      "targetHandle": "train_labels",
+      "id": "auto_label_TrainValSplit_1_Trainer_A"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "val_labels",
+      "target": "Trainer_A",
+      "targetHandle": "val_labels",
+      "id": "auto_vlabel_TrainValSplit_1_Trainer_A"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "train_labels",
+      "target": "Trainer_B",
+      "targetHandle": "train_labels",
+      "id": "auto_label_TrainValSplit_1_Trainer_B"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "val_labels",
+      "target": "Trainer_B",
+      "targetHandle": "val_labels",
+      "id": "auto_vlabel_TrainValSplit_1_Trainer_B"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "train_labels",
+      "target": "Trainer_C",
+      "targetHandle": "train_labels",
+      "id": "auto_label_TrainValSplit_1_Trainer_C"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "sourceHandle": "val_labels",
+      "target": "Trainer_C",
+      "targetHandle": "val_labels",
+      "id": "auto_vlabel_TrainValSplit_1_Trainer_C"
+    }
+  ]
+}

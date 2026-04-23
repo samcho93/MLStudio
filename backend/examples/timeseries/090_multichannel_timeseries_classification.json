@@ -1,0 +1,262 @@
+{
+  "meta": {
+    "id": 90,
+    "title": "Multi-Channel Time Series Classification",
+    "title_ko": "멀티채널 시계열 분류",
+    "category": "timeseries",
+    "difficulty": "intermediate",
+    "description": "Classify multi-channel time series by reshaping flat CSV data into 3D sequences, then processing with LSTM.",
+    "description_ko": "CSV 플랫 데이터를 Reshape 노드로 3D 시퀀스(samples, timesteps, channels)로 변환 후 LSTM으로 분류합니다.",
+    "tags": [
+      "time-series",
+      "classification",
+      "lstm",
+      "reshape",
+      "multi-channel"
+    ],
+    "estimated_time": "5~8분",
+    "dataset_info": {
+      "name": "Motion Sensor Multi-Channel",
+      "source": "UCI / Kaggle",
+      "samples": 8000,
+      "features": 60,
+      "classes": 4
+    },
+    "learning_objectives": [
+      "Reshape 노드로 2D 데이터를 3D 시퀀스로 변환하는 방법",
+      "멀티채널 시계열의 (timesteps, channels) 구조 이해",
+      "LSTM 입력 차원 요구사항 (3D: batch, time, features)",
+      "Reshape → LSTM 연결 패턴 학습"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "모션 센서 데이터를 로드합니다. 60개 컬럼 = 20 타임스텝 x 3채널(x,y,z)로 구성됩니다."
+      },
+      {
+        "step": 2,
+        "node": "TrainValSplit_1",
+        "text": "학습/검증 분할합니다."
+      },
+      {
+        "step": 3,
+        "node": "Reshape_1",
+        "text": "플랫 벡터(60,)를 3D 시퀀스(20, 3)로 변환합니다. LSTM 입력에 필수입니다."
+      },
+      {
+        "step": 4,
+        "node": "LSTM_1",
+        "text": "LSTM(64유닛)이 20 타임스텝의 3채널 시계열 패턴을 학습합니다."
+      },
+      {
+        "step": 5,
+        "node": "Dense_1",
+        "text": "출력 Dense(4유닛, softmax): 4가지 동작을 분류합니다."
+      },
+      {
+        "step": 6,
+        "node": "Trainer_1",
+        "text": "학습을 실행합니다. Reshape가 올바르게 적용되었는지 Loss 수렴으로 확인하세요."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/motion_sensor_multichannel.csv",
+        "target_column": "activity"
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2
+      }
+    },
+    {
+      "id": "Reshape_1",
+      "type": "Reshape",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "target_shape": [
+          3,
+          3
+        ]
+      }
+    },
+    {
+      "id": "LSTM_1",
+      "type": "LSTM",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "units": 64,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "units": 4,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 890,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 890,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "epochs": 30,
+        "batch_size": 32,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 1170,
+        "y": 422
+      },
+      "params": {}
+    },
+    {
+      "id": "AccuracyCurve_1",
+      "type": "AccuracyCurve",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "CSVLoader_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Reshape_1",
+      "target": "LSTM_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "LSTM_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "AccuracyCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}

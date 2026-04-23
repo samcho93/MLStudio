@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "id": 109,
+    "title": "One-Hot Encoding",
+    "title_ko": "OneHotEncoder로 범주형 변환",
+    "category": "tutorial",
+    "difficulty": "beginner",
+    "description": "Convert categorical features to one-hot vectors.",
+    "description_ko": "OneHotEncoder로 범주형 특성을 원-핫 벡터로 변환합니다.",
+    "tags": [
+      "one-hot",
+      "전처리",
+      "인코딩"
+    ],
+    "estimated_time": "30초",
+    "learning_objectives": [
+      "One-Hot Encoding이 LabelEncoding보다 나은 경우",
+      "원-핫 벡터의 구조 이해"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "CSVLoader_1",
+        "text": "데이터를 로드합니다."
+      },
+      {
+        "step": 2,
+        "node": "OneHotEncoder_1",
+        "text": "범주형 컬럼이 [1,0,0], [0,1,0] 같은 벡터로 변환됩니다."
+      },
+      {
+        "step": 3,
+        "node": "DataInspector_1",
+        "text": "변환 결과를 확인합니다. 컬럼 수가 늘어난 것을 볼 수 있습니다."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/titanic.csv",
+        "target_column": "survived"
+      }
+    },
+    {
+      "id": "OneHotEncoder_1",
+      "type": "OneHotEncoder",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "DataInspector_1",
+      "type": "DataInspector",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "CSVLoader_1",
+      "target": "OneHotEncoder_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "OneHotEncoder_1",
+      "target": "DataInspector_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    }
+  ]
+}

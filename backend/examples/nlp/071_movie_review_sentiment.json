@@ -1,0 +1,163 @@
+{
+  "meta": {
+    "id": 71,
+    "title": "Movie Review Sentiment Classification",
+    "title_ko": "영화 리뷰 감성 분류",
+    "category": "nlp",
+    "difficulty": "intermediate",
+    "description": "Classify movie reviews as positive or negative using an LSTM-based model with word embeddings.",
+    "description_ko": "단어 임베딩과 LSTM 기반 모델을 사용하여 영화 리뷰를 긍정/부정으로 분류합니다.",
+    "tags": [
+      "nlp",
+      "sentiment-analysis",
+      "lstm",
+      "embedding",
+      "binary-classification"
+    ],
+    "estimated_time": "15min",
+    "dataset_info": {
+      "name": "IMDB Movie Reviews",
+      "source": "keras.datasets.imdb",
+      "samples": 50000,
+      "features": "text (tokenized sequences)",
+      "target": "sentiment (0: negative, 1: positive)"
+    },
+    "learning_objectives": [
+      "텍스트 데이터를 토큰화하고 시퀀스로 변환하는 방법을 이해한다",
+      "Embedding 레이어의 역할과 파라미터를 학습한다",
+      "LSTM을 활용한 순차 데이터 처리 방법을 익힌다",
+      "이진 분류를 위한 손실 함수와 활성화 함수를 선택한다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "csv_loader_01",
+        "text": "IMDB 리뷰 데이터셋을 로드합니다. 텍스트는 정수 시퀀스로 사전 토큰화되어 있습니다."
+      },
+      {
+        "step": 2,
+        "node": "Embedding",
+        "text": "정수 인덱스를 128차원 밀집 벡터로 변환합니다. vocab_size=10000, max_length=256으로 설정합니다."
+      },
+      {
+        "step": 3,
+        "node": "LSTM",
+        "text": "128 유닛의 LSTM으로 시퀀스의 문맥 정보를 추출합니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense",
+        "text": "시그모이드 활성화 함수를 사용하여 이진 분류 출력을 생성합니다."
+      },
+      {
+        "step": 5,
+        "node": "Trainer",
+        "text": "binary_crossentropy 손실 함수로 20 에폭 학습합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "csv_loader_01",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/imdb_reviews.csv",
+        "text_column": "review",
+        "label_column": "sentiment",
+        "tokenize": true,
+        "max_vocab": 10000,
+        "max_length": 256,
+        "target_column": ""
+      }
+    },
+    {
+      "id": "embedding_01",
+      "type": "Embedding",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "vocab_size": 10000,
+        "embedding_dim": 128,
+        "max_length": 256
+      }
+    },
+    {
+      "id": "lstm_01",
+      "type": "LSTM",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "return_sequences": false
+      }
+    },
+    {
+      "id": "dense_01",
+      "type": "Dense",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {
+        "units": 1,
+        "activation": "sigmoid"
+      }
+    },
+    {
+      "id": "trainer_01",
+      "type": "Trainer",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "epochs": 20,
+        "batch_size": 64,
+        "optimizer": "adam",
+        "learning_rate": 0.001,
+        "loss": "binary_crossentropy",
+        "metrics": [
+          "accuracy"
+        ],
+        "validation_split": 0.2,
+        "device": "auto"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "embedding_01",
+      "target": "lstm_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "lstm_01",
+      "target": "dense_01",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "dense_01",
+      "target": "trainer_01",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "csv_loader_01",
+      "sourceHandle": "dataset",
+      "target": "embedding_01",
+      "targetHandle": "input",
+      "id": "restore_csv_loader_01_embedding_01"
+    }
+  ]
+}

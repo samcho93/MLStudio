@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "id": 60,
+    "title": "Feature Map Visualization",
+    "title_ko": "Feature Map 시각화",
+    "category": "image",
+    "difficulty": "intermediate",
+    "description": "Visualize intermediate Conv2D layer activations to understand what features each filter detects.",
+    "description_ko": "학습된 CNN 모델의 중간 Conv2D 레이어 활성화 맵을 시각화하여 각 필터가 어떤 특징을 감지하는지 확인합니다.",
+    "tags": [
+      "feature-map",
+      "visualization",
+      "cnn",
+      "activation",
+      "interpretability"
+    ],
+    "estimated_time": "10분",
+    "dataset_info": {
+      "name": "Trained CNN Model",
+      "source": "pre-trained model file",
+      "samples": null,
+      "features": "128x128x3",
+      "classes": 10
+    },
+    "learning_objectives": [
+      "CNN 각 레이어의 활성화 맵(Feature Map) 개념 이해",
+      "얕은 레이어 vs 깊은 레이어의 특징 차이 확인",
+      "필터가 학습하는 패턴(엣지, 텍스처, 형태) 시각화",
+      "모델 내부 동작의 직관적 이해",
+      "Feature Map을 활용한 모델 디버깅"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "ImageFolder_1",
+        "text": "Feature Map을 확인할 테스트 이미지를 로드합니다."
+      },
+      {
+        "step": 2,
+        "node": "PretrainedModel_1",
+        "text": "사전학습된 CNN 모델을 로드합니다. 각 합성곱 레이어의 출력을 추출합니다."
+      },
+      {
+        "step": 3,
+        "node": "FeatureMapViewer_1",
+        "text": "선택한 레이어의 Feature Map을 그리드로 시각화합니다. 초기 레이어는 엣지, 깊은 레이어는 복잡한 패턴을 보여줍니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "ImageFolder_1",
+      "type": "ImageFolder",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "folder_path": "datasets/test_images",
+        "image_size": [
+          224,
+          224
+        ],
+        "color_mode": "rgb"
+      }
+    },
+    {
+      "id": "PretrainedModel_1",
+      "type": "PretrainedModel",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "model_name": "ResNet50",
+        "weights": "imagenet",
+        "include_top": false,
+        "trainable": false
+      }
+    },
+    {
+      "id": "FeatureMapViewer_1",
+      "type": "FeatureMapViewer",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "target_layers": [
+          "conv1_relu",
+          "conv2_block1_out",
+          "conv3_block1_out",
+          "conv4_block1_out"
+        ],
+        "num_filters": 16,
+        "figsize": [
+          12,
+          8
+        ],
+        "colormap": "viridis"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "ImageFolder_1",
+      "target": "PretrainedModel_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "PretrainedModel_1",
+      "target": "FeatureMapViewer_1",
+      "sourceHandle": "output",
+      "targetHandle": "model"
+    },
+    {
+      "source": "ImageFolder_1",
+      "target": "FeatureMapViewer_1",
+      "sourceHandle": "features",
+      "targetHandle": "images"
+    }
+  ]
+}

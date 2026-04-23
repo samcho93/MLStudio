@@ -1,0 +1,548 @@
+{
+  "meta": {
+    "id": 94,
+    "title": "Mixed Input Model (Image + Tabular)",
+    "title_ko": "혼합 입력 모델 (이미지+수치)",
+    "category": "advanced",
+    "difficulty": "advanced",
+    "description": "Build a multi-input model that combines image features (via CNN) and tabular features (via Dense) using a Concat merge layer for joint prediction.",
+    "description_ko": "CNN으로 추출한 이미지 특성과 Dense로 처리한 수치 특성을 Concat으로 결합하여 예측하는 다중 입력 모델을 구축합니다.",
+    "tags": [
+      "multi-input",
+      "concat",
+      "cnn",
+      "dense",
+      "mixed-data",
+      "image",
+      "tabular"
+    ],
+    "estimated_time": "25분",
+    "dataset_info": {
+      "name": "Product Classification (Image + Metadata)",
+      "source": "custom",
+      "samples": 10000,
+      "features": "images (128x128x3) + metadata (price, weight, category_id, etc.)",
+      "classes": 20
+    },
+    "learning_objectives": [
+      "다중 입력 모델(Multi-Input Model) 구조를 설계한다",
+      "Concat 레이어로 서로 다른 유형의 특성을 결합하는 방법을 배운다",
+      "이미지 데이터와 수치 데이터를 동시에 활용하는 파이프라인을 구성한다",
+      "Functional API 스타일의 복합 모델 설계를 이해한다"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "ImageFolder_1",
+        "text": "제품 이미지를 로드합니다. 128x128 크기로 리사이즈됩니다."
+      },
+      {
+        "step": 2,
+        "node": "CSVLoader_1",
+        "text": "제품 메타데이터(가격, 무게, 카테고리 등)를 CSV에서 로드합니다."
+      },
+      {
+        "step": 3,
+        "node": "Conv2D_1",
+        "text": "이미지 브랜치: CNN으로 시각적 특성을 추출합니다."
+      },
+      {
+        "step": 4,
+        "node": "StandardScaler_1",
+        "text": "수치 브랜치: 메타데이터를 정규화합니다."
+      },
+      {
+        "step": 5,
+        "node": "Concat_1",
+        "text": "두 브랜치의 출력을 하나의 벡터로 결합합니다."
+      },
+      {
+        "step": 6,
+        "node": "Dense_3",
+        "text": "결합된 특성에서 최종 분류를 수행합니다."
+      },
+      {
+        "step": 7,
+        "node": "Trainer_1",
+        "text": "두 입력 소스를 동시에 사용하여 학습합니다."
+      }
+    ],
+    "requires_phase": 2
+  },
+  "nodes": [
+    {
+      "id": "ImageFolder_1",
+      "type": "ImageFolder",
+      "position": {
+        "x": 50,
+        "y": 422
+      },
+      "params": {
+        "folder_path": "datasets/product_images/",
+        "image_size": [
+          128,
+          128
+        ],
+        "color_mode": "rgb",
+        "label_mode": "int"
+      }
+    },
+    {
+      "id": "Augmentation_1",
+      "type": "Augmentation",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "horizontal_flip": true,
+        "rotation_range": 15,
+        "zoom_range": 0.1,
+        "brightness_range": [
+          0.8,
+          1.2
+        ]
+      }
+    },
+    {
+      "id": "Conv2D_1",
+      "type": "Conv2D",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "filters": 32,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "MaxPooling2D_1",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 890,
+        "y": 422
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Conv2D_2",
+      "type": "Conv2D",
+      "position": {
+        "x": 1170,
+        "y": 80
+      },
+      "params": {
+        "filters": 64,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "MaxPooling2D_2",
+      "type": "MaxPooling2D",
+      "position": {
+        "x": 1450,
+        "y": 80
+      },
+      "params": {
+        "pool_size": 2
+      }
+    },
+    {
+      "id": "Conv2D_3",
+      "type": "Conv2D",
+      "position": {
+        "x": 1730,
+        "y": 80
+      },
+      "params": {
+        "filters": 128,
+        "kernel_size": 3,
+        "activation": "relu",
+        "padding": "same"
+      }
+    },
+    {
+      "id": "GlobalAveragePooling2D_1",
+      "type": "GlobalAveragePooling2D",
+      "position": {
+        "x": 2010,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "Dense_img",
+      "type": "Dense",
+      "position": {
+        "x": 2290,
+        "y": 80
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "CSVLoader_1",
+      "type": "CSVLoader",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "file_path": "datasets/product_metadata.csv",
+        "target_column": "category",
+        "feature_columns": [
+          "price",
+          "weight",
+          "brand_id",
+          "material_id",
+          "year",
+          "rating"
+        ]
+      }
+    },
+    {
+      "id": "StandardScaler_1",
+      "type": "StandardScaler",
+      "position": {
+        "x": 330,
+        "y": 422
+      },
+      "params": {
+        "fit_on": "train"
+      }
+    },
+    {
+      "id": "Dense_tab1",
+      "type": "Dense",
+      "position": {
+        "x": 610,
+        "y": 422
+      },
+      "params": {
+        "units": 64,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "BatchNorm_tab",
+      "type": "BatchNorm",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {}
+    },
+    {
+      "id": "Dense_tab2",
+      "type": "Dense",
+      "position": {
+        "x": 1170,
+        "y": 422
+      },
+      "params": {
+        "units": 32,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Concat_1",
+      "type": "Concat",
+      "position": {
+        "x": 2570,
+        "y": 80
+      },
+      "params": {
+        "axis": -1
+      }
+    },
+    {
+      "id": "Dense_3",
+      "type": "Dense",
+      "position": {
+        "x": 2850,
+        "y": 80
+      },
+      "params": {
+        "units": 128,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Dropout_1",
+      "type": "Dropout",
+      "position": {
+        "x": 3130,
+        "y": 80
+      },
+      "params": {
+        "rate": 0.5
+      }
+    },
+    {
+      "id": "Dense_4",
+      "type": "Dense",
+      "position": {
+        "x": 3410,
+        "y": 80
+      },
+      "params": {
+        "units": 20,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 3690,
+        "y": 422
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.0005
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 3690,
+        "y": 764
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "EarlyStopping_1",
+      "type": "EarlyStopping",
+      "position": {
+        "x": 3690,
+        "y": 1106
+      },
+      "params": {
+        "monitor": "val_loss",
+        "patience": 8,
+        "restore_best_weights": true
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 3690,
+        "y": 80
+      },
+      "params": {
+        "epochs": 30,
+        "batch_size": 32,
+        "framework": "pytorch",
+        "multi_input": true
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 3970,
+        "y": 764
+      },
+      "params": {}
+    },
+    {
+      "id": "ClassificationMetrics_1",
+      "type": "ClassificationMetrics",
+      "position": {
+        "x": 3970,
+        "y": 80
+      },
+      "params": {
+        "metrics": [
+          "accuracy",
+          "precision",
+          "recall",
+          "f1"
+        ]
+      }
+    },
+    {
+      "id": "ConfusionMatrix_1",
+      "type": "ConfusionMatrix",
+      "position": {
+        "x": 3970,
+        "y": 422
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "ImageFolder_1",
+      "target": "Augmentation_1",
+      "sourceHandle": "features",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Augmentation_1",
+      "target": "Conv2D_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_1",
+      "target": "MaxPooling2D_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_1",
+      "target": "Conv2D_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_2",
+      "target": "MaxPooling2D_2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "MaxPooling2D_2",
+      "target": "Conv2D_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Conv2D_3",
+      "target": "GlobalAveragePooling2D_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "GlobalAveragePooling2D_1",
+      "target": "Dense_img",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_img",
+      "target": "Concat_1",
+      "sourceHandle": "output",
+      "targetHandle": "input_a"
+    },
+    {
+      "source": "StandardScaler_1",
+      "target": "Dense_tab1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_tab1",
+      "target": "BatchNorm_tab",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "BatchNorm_tab",
+      "target": "Dense_tab2",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_tab2",
+      "target": "Concat_1",
+      "sourceHandle": "output",
+      "targetHandle": "input_b"
+    },
+    {
+      "source": "Concat_1",
+      "target": "Dense_3",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_3",
+      "target": "Dropout_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dropout_1",
+      "target": "Dense_4",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_4",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "EarlyStopping_1",
+      "target": "Trainer_1",
+      "sourceHandle": "callback_config",
+      "targetHandle": "callback_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "ClassificationMetrics_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "ConfusionMatrix_1",
+      "sourceHandle": "model",
+      "targetHandle": "model"
+    },
+    {
+      "source": "CSVLoader_1",
+      "sourceHandle": "dataset",
+      "target": "StandardScaler_1",
+      "targetHandle": "input",
+      "id": "restore_CSVLoader_1_StandardScaler_1"
+    },
+    {
+      "source": "CSVLoader_1",
+      "sourceHandle": "features",
+      "target": "Trainer_1",
+      "targetHandle": "train_features",
+      "id": "fix_data_94"
+    },
+    {
+      "source": "CSVLoader_1",
+      "sourceHandle": "labels",
+      "target": "Trainer_1",
+      "targetHandle": "train_labels",
+      "id": "fix_labels_94"
+    }
+  ]
+}

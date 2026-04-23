@@ -1,0 +1,225 @@
+{
+  "meta": {
+    "id": 121,
+    "title": "First Conv2D Network",
+    "title_ko": "Conv2D 첫 사용 (이미지 분류)",
+    "category": "tutorial",
+    "difficulty": "intermediate",
+    "description": "Build a simple CNN with Conv2D → Flatten → Dense.",
+    "description_ko": "Conv2D → Flatten → Dense 구조로 첫 CNN을 만들어 이미지를 분류합니다.",
+    "tags": [
+      "conv2d",
+      "cnn",
+      "flatten",
+      "이미지"
+    ],
+    "estimated_time": "2분",
+    "learning_objectives": [
+      "Conv2D: 이미지에서 특징(엣지, 패턴)을 추출",
+      "Flatten: 2D 특성맵을 1D로 펼침 (Dense 연결 전 필수)",
+      "CNN이 Dense보다 이미지에 효과적인 이유"
+    ],
+    "guide_steps": [
+      {
+        "step": 1,
+        "node": "ImageFolder_1",
+        "text": "MNIST 이미지를 로드합니다."
+      },
+      {
+        "step": 2,
+        "node": "Conv2D_1",
+        "text": "32개의 3x3 필터로 이미지에서 패턴을 추출합니다."
+      },
+      {
+        "step": 3,
+        "node": "Flatten_1",
+        "text": "2D 특성맵을 1D 벡터로 펼칩니다. Dense에 연결하기 위해 필수입니다."
+      },
+      {
+        "step": 4,
+        "node": "Dense_1",
+        "text": "10개 출력 (0~9 숫자). softmax로 확률을 출력합니다."
+      }
+    ],
+    "requires_phase": 1
+  },
+  "nodes": [
+    {
+      "id": "ImageFolder_1",
+      "type": "ImageFolder",
+      "position": {
+        "x": 50,
+        "y": 80
+      },
+      "params": {
+        "folder_path": "datasets/mnist_images",
+        "image_size": 28
+      }
+    },
+    {
+      "id": "TrainValSplit_1",
+      "type": "TrainValSplit",
+      "position": {
+        "x": 330,
+        "y": 80
+      },
+      "params": {
+        "val_ratio": 0.2,
+        "random_seed": 42
+      }
+    },
+    {
+      "id": "Conv2D_1",
+      "type": "Conv2D",
+      "position": {
+        "x": 50,
+        "y": 480
+      },
+      "params": {
+        "filters": 32,
+        "kernel_size": 3,
+        "activation": "relu"
+      }
+    },
+    {
+      "id": "Flatten_1",
+      "type": "Flatten",
+      "position": {
+        "x": 330,
+        "y": 480
+      },
+      "params": {}
+    },
+    {
+      "id": "Dense_1",
+      "type": "Dense",
+      "position": {
+        "x": 610,
+        "y": 480
+      },
+      "params": {
+        "units": 10,
+        "activation": "softmax"
+      }
+    },
+    {
+      "id": "Optimizer_1",
+      "type": "Optimizer",
+      "position": {
+        "x": 890,
+        "y": 480
+      },
+      "params": {
+        "type": "adam",
+        "learning_rate": 0.001
+      }
+    },
+    {
+      "id": "LossFunction_1",
+      "type": "LossFunction",
+      "position": {
+        "x": 890,
+        "y": 880
+      },
+      "params": {
+        "type": "sparse_categorical_crossentropy"
+      }
+    },
+    {
+      "id": "Trainer_1",
+      "type": "Trainer",
+      "position": {
+        "x": 610,
+        "y": 80
+      },
+      "params": {
+        "epochs": 5,
+        "batch_size": 32,
+        "framework": "pytorch"
+      }
+    },
+    {
+      "id": "LossCurve_1",
+      "type": "LossCurve",
+      "position": {
+        "x": 890,
+        "y": 80
+      },
+      "params": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "features",
+      "targetHandle": "features"
+    },
+    {
+      "source": "ImageFolder_1",
+      "target": "TrainValSplit_1",
+      "sourceHandle": "labels",
+      "targetHandle": "labels"
+    },
+    {
+      "source": "Conv2D_1",
+      "target": "Flatten_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Flatten_1",
+      "target": "Dense_1",
+      "sourceHandle": "output",
+      "targetHandle": "input"
+    },
+    {
+      "source": "Dense_1",
+      "target": "Trainer_1",
+      "sourceHandle": "output",
+      "targetHandle": "layers"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_features",
+      "targetHandle": "train_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "train_labels",
+      "targetHandle": "train_labels"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_features",
+      "targetHandle": "val_features"
+    },
+    {
+      "source": "TrainValSplit_1",
+      "target": "Trainer_1",
+      "sourceHandle": "val_labels",
+      "targetHandle": "val_labels"
+    },
+    {
+      "source": "Optimizer_1",
+      "target": "Trainer_1",
+      "sourceHandle": "optimizer_config",
+      "targetHandle": "optimizer_config"
+    },
+    {
+      "source": "LossFunction_1",
+      "target": "Trainer_1",
+      "sourceHandle": "loss_config",
+      "targetHandle": "loss_config"
+    },
+    {
+      "source": "Trainer_1",
+      "target": "LossCurve_1",
+      "sourceHandle": "history",
+      "targetHandle": "history"
+    }
+  ]
+}
