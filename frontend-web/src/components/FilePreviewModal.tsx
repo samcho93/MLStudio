@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { apiFetch, apiUrl } from '../api';
 
 interface PreviewData {
   type: string;
@@ -41,7 +42,7 @@ export function FilePreviewModal({ filePath, onClose }: Props) {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(
+        const res = await apiFetch(
           `/api/preview?path=${encodeURIComponent(filePath)}`
         );
         const json = await res.json();
@@ -242,7 +243,7 @@ function CSVFullDataViewer({ filePath, onBack }: { filePath: string; onBack: () 
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(
+        const res = await apiFetch(
           `/api/preview/csv-full?path=${encodeURIComponent(filePath)}&page=${page}&page_size=${pageSize}`
         );
         const json = await res.json();
@@ -522,7 +523,7 @@ function ImageThumbnailGrid({ images, label }: { images: string[]; label: string
               </div>
             ) : (
               <img
-                src={`/api/preview/image?path=${encodeURIComponent(imgPath)}`}
+                src={apiUrl(`/api/preview/image?path=${encodeURIComponent(imgPath)}`)}
                 alt={`${label} ${idx + 1}`}
                 loading="lazy"
                 className="w-full h-full object-cover"

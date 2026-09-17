@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
+import { apiFetch } from '../api';
 
 interface ModelInfo {
   ready: boolean;
@@ -31,7 +32,7 @@ export function PredictionPanel() {
   // 모델 정보 가져오기
   useEffect(() => {
     if (!training.isTraining && training.modelPath) {
-      fetch('/api/model-info')
+      apiFetch('/api/model-info')
         .then((r) => r.json())
         .then((info) => {
           if (info.ready) {
@@ -63,7 +64,7 @@ export function PredictionPanel() {
         ? modelInfo.feature_names.map((name) => parseFloat(inputValues[name] || '0'))
         : Object.values(inputValues).map((v) => parseFloat(v || '0'));
 
-      const res = await fetch('/api/predict', {
+      const res = await apiFetch('/api/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ input: values }),

@@ -20,6 +20,7 @@ import { TrainingPanel } from './components/TrainingPanel';
 import { ExecutionLog } from './components/ExecutionLog';
 import { ModelManagerPanel } from './components/ModelManagerPanel';
 import { NODE_DESCRIPTIONS } from './components/HelpModal';
+import { fetchJsonWithFallback } from './api';
 
 let nodeCounter = 1000; // drag-drop용 카운터 (Sidebar와 충돌 방지)
 
@@ -158,8 +159,7 @@ export default function App() {
 
   // 노드 카탈로그 로드
   useEffect(() => {
-    fetch('/api/node-catalog')
-      .then((res) => res.json())
+    fetchJsonWithFallback('/api/node-catalog', 'node-catalog.json')
       .then((data) => setCatalog(data))
       .catch(() => {
         // 오프라인 시 기본 카탈로그

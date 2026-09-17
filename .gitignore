@@ -40,3 +40,6 @@ Thumbs.db
 
 # 빌드 캐시
 *.tsbuildinfo
+
+# GitHub Pages 정적 API 스냅샷 (backend/scripts/export_static_api.py 로 생성)
+frontend-web/public/static-api/

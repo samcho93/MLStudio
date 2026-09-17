@@ -180,6 +180,47 @@ stop.bat
 
 ---
 
+## GitHub Pages 배포 (웹 데모)
+
+**접속 주소: https://samcho93.github.io/MLStudio/**
+
+빌드 결과물은 `gh-pages` 브랜치로 배포한다. 코드를 수정한 뒤 다음 명령으로 다시 배포한다.
+
+```bat
+cd frontend-web
+set PYTHON=%USERPROFILE%\AppData\Local\Programs\Python\Python39\python.exe
+npm run deploy:pages
+```
+
+`scripts/deploy-pages.mjs` 가 수행하는 작업:
+
+1. `backend/scripts/export_static_api.py` — 노드 카탈로그 / 예제 130종을 `frontend-web/public/static-api/*.json` 으로 내보냄
+2. `VITE_BASE_PATH=/MLStudio/`, `VITE_STATIC_HOST=1` 로 `npm run build`
+3. `frontend-web/dist` 를 `gh-pages` 브랜치에 force push
+
+> 최초 1회: 저장소 **Settings → Pages → Build and deployment** 에서 Source 를 **Deploy from a branch**, Branch 를 **gh-pages / (root)** 로 지정해야 한다.
+
+### 데모 모드 / 백엔드 연결
+
+GitHub Pages 는 정적 호스팅이므로 Python 백엔드가 없다.
+
+- **백엔드 없이 가능**: 노드 편집, 예제 불러오기, 도움말, 보고서(PDF) 생성
+- **백엔드 필요**: Run(학습), 예측, 모델 저장/불러오기, 파이프라인 Save/Load, 파일 미리보기
+
+학습까지 사용하려면 로컬 PC에서 백엔드를 실행하고 **HTTPS 터널**로 공개한 뒤,
+툴바 오른쪽 **[데모 모드]** 버튼에 주소를 입력한다. (Pages 는 HTTPS 이므로 `http://` 원격 주소는 브라우저가 차단한다)
+
+```bat
+cd backend
+python -X utf8 main.py
+ngrok http 8000
+```
+
+주소는 URL 쿼리로도 지정할 수 있으며 브라우저에 저장된다: `https://samcho93.github.io/MLStudio/?api=https://xxxx.ngrok-free.app`
+(초기화: `?api=`)
+
+---
+
 ## 노드 카탈로그 요약
 
 | 분류       | 대표 노드                                                                  |

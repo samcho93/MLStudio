@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useStore } from '../store/useStore';
+import { fetchJsonWithFallback } from '../api';
 
 /* ───────────────────────────── 타입 ─────────────────────────────── */
 interface ExampleFull {
@@ -203,8 +204,7 @@ export function HelpModal({ onClose }: { onClose: () => void }) {
   const catalog = useStore((s) => s.catalog);
 
   useEffect(() => {
-    fetch('/api/examples/all-details')
-      .then(r => r.json())
+    fetchJsonWithFallback('/api/examples/all-details', 'examples-all-details.json')
       .then(data => setExamples(data))
       .catch(() => {});
   }, []);

@@ -4,6 +4,8 @@ import react from '@vitejs/plugin-react';
 const isNgrok = process.env.NGROK === '1';
 
 export default defineConfig({
+  // GitHub Pages 배포 시 VITE_BASE_PATH=/MLStudio/ (https://samcho93.github.io/MLStudio/)
+  base: process.env.VITE_BASE_PATH || '/',
   plugins: [react()],
   server: {
     host: true,

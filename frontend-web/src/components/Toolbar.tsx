@@ -5,6 +5,8 @@ import { HelpModal } from './HelpModal';
 import { ReportPreviewModal } from './ReportPreviewModal';
 import { ModelRecommendModal } from './ModelRecommendModal';
 import { toPng } from 'html-to-image';
+import { apiFetch, hasBackend, wsUrl } from '../api';
+import { BackendSettings } from './BackendSettings';
 
 export function Toolbar() {
   const { fitView } = useReactFlow();
@@ -54,6 +56,10 @@ export function Toolbar() {
   }, [fetchExamples]);
 
   const handleRun = () => {
+    if (!hasBackend()) {
+      alert('학습을 실행하려면 학습 서버(백엔드)가 필요합니다.\n툴바 오른쪽의 [데모 모드] 버튼에서 서버 주소를 입력하세요.');
+      return;
+    }
     const pipelineNodes = nodes.map((n) => ({
       id: n.id,
       type: n.data.nodeType,
@@ -73,8 +79,7 @@ export function Toolbar() {
     setLogPanelOpen(true);
     addLog('info', `\u{1F680} Pipeline started \u2014 ${pipelineNodes.length} nodes, ${pipelineEdges.length} edges`);
 
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const socket = new WebSocket(`${wsProtocol}//${window.location.host}/ws/train`);
+    const socket = new WebSocket(wsUrl('/ws/train'));
 
     socket.onopen = () => {
       addLog('info', 'Connected to backend');
@@ -249,20 +254,31 @@ export function Toolbar() {
     }));
     const name = prompt('Pipeline name:', 'my-pipeline');
     if (!name) return;
-    await fetch('/api/pipeline/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, nodes: pipelineNodes, edges: pipelineEdges }),
-    });
+    try {
+      const res = await apiFetch('/api/pipeline/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, nodes: pipelineNodes, edges: pipelineEdges }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    } catch {
+      alert('파이프라인 저장에 실패했습니다. 학습 서버(백엔드) 연결을 확인하세요.');
+    }
   };
 
   const handleLoad = async () => {
-    const res = await fetch('/api/pipeline/list');
-    const list = await res.json();
+    let list: any[];
+    try {
+      const res = await apiFetch('/api/pipeline/list');
+      list = await res.json();
+    } catch {
+      alert('파이프라인 목록을 불러오지 못했습니다. 학습 서버(백엔드) 연결을 확인하세요.');
+      return;
+    }
     if (list.length === 0) { alert('No saved pipelines'); return; }
     const name = prompt(`Pipelines:\n${list.map((p: any) => p.name).join('\n')}\n\nEnter name to load:`);
     if (!name) return;
-    const pRes = await fetch(`/api/pipeline/load/${name}`);
+    const pRes = await apiFetch(`/api/pipeline/load/${name}`);
     if (!pRes.ok) { alert('Pipeline not found'); return; }
     const pipeline = await pRes.json();
     const { catalog } = useStore.getState();
@@ -467,6 +483,7 @@ export function Toolbar() {
       {/* 오른쪽 */}
       <div className="flex-1" />
 
+      <BackendSettings />
       <button
         onClick={handleReport}
         disabled={nodes.length === 0}

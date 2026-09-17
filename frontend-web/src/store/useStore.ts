@@ -9,6 +9,7 @@ import {
   applyEdgeChanges,
   addEdge,
 } from '@xyflow/react';
+import { apiFetch, fetchJsonWithFallback } from '../api';
 
 // ── Undo/Redo 스냅샷 ─────────────────────────────
 interface Snapshot {
@@ -315,8 +316,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   fetchExamples: async () => {
     try {
-      const res = await fetch('/api/examples');
-      const data = await res.json();
+      const data = await fetchJsonWithFallback('/api/examples', 'examples.json');
       set({ examples: data });
     } catch {
       set({ examples: [] });
@@ -325,8 +325,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   loadExample: async (id: number) => {
     try {
-      const res = await fetch(`/api/examples/${id}`);
-      const data = await res.json();
+      const data = await fetchJsonWithFallback(`/api/examples/${id}`, `examples/${id}.json`);
       const { catalog } = get();
 
       const meta: ExampleMeta = data.meta;
@@ -571,7 +570,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   fetchSavedModels: async () => {
     try {
-      const res = await fetch('/api/model/list');
+      const res = await apiFetch('/api/model/list');
       const data = await res.json();
       set({ savedModels: data });
     } catch {
@@ -581,7 +580,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   saveCurrentModel: async (name: string) => {
     try {
-      const res = await fetch('/api/model/save', {
+      const res = await apiFetch('/api/model/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
@@ -602,7 +601,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   loadSavedModel: async (name: string) => {
     try {
-      const res = await fetch(`/api/model/load/${name}`, { method: 'POST' });
+      const res = await apiFetch(`/api/model/load/${name}`, { method: 'POST' });
       const data = await res.json();
       if (data.error) {
         get().addLog('error', `Model load failed: ${data.error}`);
@@ -618,7 +617,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   deleteSavedModel: async (name: string) => {
     try {
-      const res = await fetch(`/api/model/delete/${name}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/model/delete/${name}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.error) {
         get().addLog('error', `Model delete failed: ${data.error}`);
