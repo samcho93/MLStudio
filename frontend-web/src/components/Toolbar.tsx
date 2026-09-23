@@ -6,6 +6,7 @@ import { ReportPreviewModal } from './ReportPreviewModal';
 import { ModelRecommendModal } from './ModelRecommendModal';
 import { toPng } from 'html-to-image';
 import { apiFetch, hasBackend, wsUrl } from '../api';
+import { executePipeline, requestAbort, unsupportedNodeTypes } from '../local/engine';
 import { BackendSettings } from './BackendSettings';
 
 export function Toolbar() {
@@ -56,14 +57,10 @@ export function Toolbar() {
   }, [fetchExamples]);
 
   const handleRun = () => {
-    if (!hasBackend()) {
-      alert('학습을 실행하려면 학습 서버(백엔드)가 필요합니다.\n툴바 오른쪽의 [데모 모드] 버튼에서 서버 주소를 입력하세요.');
-      return;
-    }
     const pipelineNodes = nodes.map((n) => ({
       id: n.id,
-      type: n.data.nodeType,
-      params: n.data.params || {},
+      type: String(n.data.nodeType),
+      params: (n.data.params || {}) as Record<string, any>,
     }));
 
     const pipelineEdges = edges.map((e) => ({
@@ -79,22 +76,9 @@ export function Toolbar() {
     setLogPanelOpen(true);
     addLog('info', `\u{1F680} Pipeline started \u2014 ${pipelineNodes.length} nodes, ${pipelineEdges.length} edges`);
 
-    const socket = new WebSocket(wsUrl('/ws/train'));
-
-    socket.onopen = () => {
-      addLog('info', 'Connected to backend');
-      socket.send(
-        JSON.stringify({
-          type: 'START_TRAINING',
-          pipeline: { nodes: pipelineNodes, edges: pipelineEdges },
-        })
-      );
-    };
-
     let currentNodeId: string | null = null;
 
-    socket.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
+    const handleMessage = (msg: any) => {
       const store = useStore.getState();
 
       switch (msg.type) {
@@ -212,10 +196,44 @@ export function Toolbar() {
           }
           break;
 
+        case 'INFO':
+          store.addLog('info', msg.message);
+          break;
+
         default:
           store.addLog('info', `Unknown message: ${msg.type}`);
       }
     };
+
+    // ── 백엔드가 없으면 브라우저(TensorFlow.js)에서 실행 ──
+    if (!hasBackend()) {
+      const unsupported = unsupportedNodeTypes(pipelineNodes);
+      if (unsupported.length > 0) {
+        addLog('error', `브라우저 모드에서 지원하지 않는 노드가 있습니다: ${unsupported.join(', ')}`);
+        addLog('info', '오른쪽 [브라우저 모드] 버튼에서 학습 서버를 연결하면 모든 노드를 사용할 수 있습니다.');
+        setTraining({ isTraining: false });
+        return;
+      }
+      addLog('info', '🖥 브라우저 모드 — TensorFlow.js로 학습합니다 (백엔드 없음)');
+      executePipeline(pipelineNodes, pipelineEdges, handleMessage)
+        .catch((e) => handleMessage({ type: 'ERROR', message: e?.message || String(e) }))
+        .finally(() => setTraining({ isTraining: false }));
+      return;
+    }
+
+    const socket = new WebSocket(wsUrl('/ws/train'));
+
+    socket.onopen = () => {
+      addLog('info', 'Connected to backend');
+      socket.send(
+        JSON.stringify({
+          type: 'START_TRAINING',
+          pipeline: { nodes: pipelineNodes, edges: pipelineEdges },
+        })
+      );
+    };
+
+    socket.onmessage = (event) => handleMessage(JSON.parse(event.data));
 
     socket.onerror = () => {
       setTraining({ isTraining: false, error: 'WebSocket connection failed' });
@@ -230,6 +248,7 @@ export function Toolbar() {
   };
 
   const handleStop = () => {
+    requestAbort();
     if (ws) {
       ws.send(JSON.stringify({ type: 'STOP_TRAINING' }));
       ws.close();

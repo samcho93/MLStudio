@@ -73,11 +73,26 @@ def export_examples(out: Path) -> int:
     return len(details)
 
 
+def export_datasets(out_root: Path) -> int:
+    """브라우저 학습용 CSV 데이터셋 복사 (이미지 데이터셋은 제외)."""
+    import shutil
+
+    src = BACKEND_DIR / "datasets"
+    dest = out_root / "datasets"
+    dest.mkdir(parents=True, exist_ok=True)
+    count = 0
+    for csv_file in sorted(src.glob("*.csv")):
+        shutil.copy2(csv_file, dest / csv_file.name)
+        count += 1
+    return count
+
+
 def main() -> None:
     out = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else DEFAULT_OUT
     n_nodes = export_node_catalog(out)
     n_examples = export_examples(out)
-    print(f"Exported {n_nodes} node types, {n_examples} examples -> {out}")
+    n_csv = export_datasets(out.parent)
+    print(f"Exported {n_nodes} node types, {n_examples} examples, {n_csv} CSV datasets -> {out.parent}")
 
 
 if __name__ == "__main__":

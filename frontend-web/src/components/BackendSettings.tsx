@@ -47,7 +47,7 @@ export function BackendSettings() {
       ? 'Backend...'
       : hasBackend()
       ? 'Backend 오프라인'
-      : '데모 모드';
+      : '브라우저 모드';
 
   return (
     <div className="relative flex items-center" ref={ref}>
@@ -86,7 +86,7 @@ export function BackendSettings() {
             {status === 'online'
               ? '✓ 서버에 연결되었습니다. 학습/예측/모델 관리 기능을 사용할 수 있습니다.'
               : IS_STATIC_HOST
-              ? '서버 없이도 노드 편집·예제 불러오기·보고서는 사용할 수 있습니다. 학습(Run)을 하려면 로컬에서 백엔드와 ngrok 터널(포트 8000)을 실행한 뒤 주소를 입력하세요.'
+              ? '서버 없이 브라우저(TensorFlow.js)에서 학습합니다. 표(CSV) 데이터 + Dense 계열 예제가 대상이며, CNN·LSTM·전이학습 등은 학습 서버가 필요합니다. 서버를 쓰려면 로컬에서 백엔드와 ngrok 터널(포트 8000)을 실행한 뒤 주소를 입력하세요.'
               : '서버에 연결할 수 없습니다. 백엔드(uvicorn, 포트 8000)가 실행 중인지 확인하세요.'}
           </div>
         </div>

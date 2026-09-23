@@ -200,15 +200,26 @@ npm run deploy:pages
 
 > 최초 1회: 저장소 **Settings → Pages → Build and deployment** 에서 Source 를 **Deploy from a branch**, Branch 를 **gh-pages / (root)** 로 지정해야 한다.
 
-### 데모 모드 / 백엔드 연결
+### 브라우저 모드 (백엔드 없이 학습)
 
-GitHub Pages 는 정적 호스팅이므로 Python 백엔드가 없다.
+GitHub Pages 는 정적 호스팅이라 Python 백엔드가 없다.
+이 경우 **TensorFlow.js 로 브라우저에서 직접 학습**한다 (`frontend-web/src/local/`).
 
-- **백엔드 없이 가능**: 노드 편집, 예제 불러오기, 도움말, 보고서(PDF) 생성
-- **백엔드 필요**: Run(학습), 예측, 모델 저장/불러오기, 파이프라인 Save/Load, 파일 미리보기
+- 학습 데이터: `backend/datasets/*.csv` (저장소에 포함, 빌드 시 `/datasets/` 로 복사됨)
+- 브라우저에서 지원하는 노드
+  - 데이터: `CSVLoader`, `TrainValSplit`, `StandardScaler`, `MinMaxScaler`, `LabelEncoder`, `OneHotEncoder`, `DataInspector`
+  - 레이어: `Dense`, `Dropout`, `BatchNorm`, `Flatten`
+  - 학습: `Optimizer`, `LossFunction`, `EarlyStopping`, `LRScheduler`, `ModelCheckpoint`, `Trainer`
+  - 평가/시각화: `ClassificationMetrics`, `RegressionMetrics`, `ConfusionMatrix`, `ModelSummary`, `LossCurve`, `AccuracyCurve`
+- 예제 130개 중 **45개**(표 데이터 + Dense 계열)가 브라우저에서 그대로 학습된다.
+  지원하지 않는 노드가 있으면 실행 시 해당 노드 이름을 알려준다.
 
-학습까지 사용하려면 로컬 PC에서 백엔드를 실행하고 **HTTPS 터널**로 공개한 뒤,
-툴바 오른쪽 **[데모 모드]** 버튼에 주소를 입력한다. (Pages 는 HTTPS 이므로 `http://` 원격 주소는 브라우저가 차단한다)
+| 백엔드 없이 가능 | 백엔드 필요 |
+| --- | --- |
+| 노드 편집, 예제 불러오기, 도움말, 보고서(PDF), **표 데이터 학습 + 평가/시각화** | CNN·LSTM·Transformer·전이학습, 이미지 데이터셋, 예측 패널, 모델 저장/불러오기, 파이프라인 Save/Load, ONNX 내보내기 |
+
+모든 노드를 사용하려면 로컬 PC에서 백엔드를 실행하고 **HTTPS 터널**로 공개한 뒤,
+툴바 오른쪽 **[브라우저 모드]** 버튼에 주소를 입력한다. (Pages 는 HTTPS 이므로 `http://` 원격 주소는 브라우저가 차단한다)
 
 ```bat
 cd backend

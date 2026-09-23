@@ -2,7 +2,8 @@
 # Folder
 .claude/
 docs/
-/backend/datasets
+/backend/datasets/*
+!/backend/datasets/*.csv
 /backend/__pycache__
 
 # Files
@@ -43,3 +44,4 @@ Thumbs.db
 
 # GitHub Pages 정적 API 스냅샷 (backend/scripts/export_static_api.py 로 생성)
 frontend-web/public/static-api/
+frontend-web/public/datasets/

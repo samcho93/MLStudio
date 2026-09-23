@@ -1,0 +1,201 @@
+tokens,ner_tags
+at York York the at John works John Google at in,O O B-LOC O O O I-LOC B-ORG
+New in lives in Apple,O O O B-ORG I-LOC B-ORG O O
+York Google and and York Apple lives works at in Google,O O O O B-ORG
+works lives the York Google York,B-ORG O O B-PER O O B-LOC O I-LOC B-PER O B-LOC O
+Google Google York Apple lives,O B-LOC B-PER O O B-ORG O I-LOC B-PER B-PER B-PER I-LOC B-LOC
+New and at Google the at,O O B-ORG B-PER O O O B-PER O B-ORG O O O O
+at and lives John and and New lives the Apple works Google,B-ORG B-ORG O B-ORG O O B-ORG O
+the and works and at in the York the,B-LOC O B-LOC O O
+works New in New Apple and York works lives works,B-ORG O O B-PER O B-LOC
+York Google New Apple the at lives,O O O B-ORG O B-LOC B-ORG O
+York and lives and at at York New Google in lives lives works lives,O O B-ORG B-ORG B-ORG O B-LOC O B-ORG O I-LOC O O
+and New at York lives at,B-ORG O O O O O O O B-ORG I-LOC I-LOC
+lives John works works Google and York lives New at at works at,I-LOC O O B-PER O B-ORG B-PER O O B-PER O O O I-LOC
+the at York in works York John in at the New in Apple lives,B-PER O O B-PER O I-LOC
+Apple York works York York and works works,B-ORG B-PER B-LOC O B-ORG B-LOC B-ORG O
+Apple at Apple and in,O B-ORG B-ORG O B-PER I-LOC O O O O O O
+in New lives and lives in works works Google and and lives lives Apple,B-PER O I-LOC O O B-ORG
+York and New York at New in Apple at Apple lives the works,B-LOC B-PER B-LOC B-LOC O O B-LOC B-PER
+Google in works and John at works John at York,B-LOC O O I-LOC O O O B-ORG B-ORG B-ORG O I-LOC B-LOC
+Google lives John at York,O O O I-LOC B-ORG B-ORG O B-ORG
+Apple the the New Apple lives Google the at New,B-LOC O B-PER O O
+in and works lives New in Apple New works at lives York Apple at,O I-LOC O O O O B-ORG O O
+and works New lives the works in,O O B-ORG O B-ORG O B-PER B-ORG O B-PER
+and John York York New Apple works Google New and New,B-ORG O O B-ORG B-ORG O O
+at New works in Apple works in John New York Apple,B-ORG O O I-LOC O I-LOC O B-ORG
+Google Google John Apple at and works the York lives,O O B-LOC O B-LOC B-PER O B-ORG B-ORG O O O O O
+Apple New and New Apple the in New,O O O O O B-ORG B-PER B-LOC B-PER B-ORG B-PER
+Google lives the and in and works Apple in,O O B-PER B-PER O B-ORG O O O O
+the lives works the Google New and John New in Google lives in lives,O O B-ORG O O O I-LOC O O O B-ORG B-ORG
+John Google at John Google Apple Apple at works and in,O B-ORG B-ORG I-LOC O O O O O
+York New John New York works works in York York the and John lives,B-PER B-PER B-PER B-LOC O B-ORG O O O I-LOC
+lives York in lives Apple and York Apple John Apple in lives New,O O B-PER O B-PER B-PER O O
+works and lives works York New and in works York the New and the,O O O O O O O O O B-ORG
+Apple and Apple New and York Apple the works Google and works works,B-ORG O O B-LOC B-PER B-LOC O O B-ORG
+Apple Google lives at Google York the Apple Google Apple,B-LOC O B-ORG B-PER O O B-PER B-PER B-LOC B-PER
+at the John the at Apple at John John the,B-PER O B-PER B-PER B-ORG O O
+in John at lives in Google New Google New,O O O I-LOC O O O
+York the and in in at Apple and and,B-LOC O B-ORG I-LOC O B-ORG B-ORG I-LOC O O O B-ORG
+Apple York Apple works York Google Google at works Apple works,B-ORG I-LOC O B-ORG O B-PER O O B-PER B-ORG O O
+John and Google and New in in Apple,I-LOC O O B-ORG B-LOC I-LOC B-ORG O O O O O
+in York Apple Google in the Apple,I-LOC I-LOC O O B-LOC O B-ORG O O
+John at works and at John,B-ORG O B-ORG O O
+York in works the at York,B-ORG B-ORG O B-PER O O O O O O O
+lives works at works at in at and Google Google and and Google,B-ORG B-ORG B-ORG O O B-ORG O B-ORG O
+Google John John at lives Google and in the New,I-LOC I-LOC B-LOC O O O I-LOC O B-ORG B-LOC I-LOC
+in New lives lives lives,B-LOC B-PER O B-ORG B-PER O O O
+and John York lives in Apple Google John in,I-LOC O O O O I-LOC O I-LOC I-LOC B-PER B-ORG O B-ORG O
+York and John works New Google New John and John York works,O O O O B-ORG O B-ORG O O O B-ORG
+Google New lives lives Apple York in John New New works,B-ORG O O O B-PER O O O O O O
+John Google John New John,O O O B-PER B-LOC O B-PER
+works Google lives York and York John works New John,O B-PER B-PER B-LOC O O O O O B-ORG B-PER O
+the and York York the York the York,O B-ORG B-ORG B-PER O O O O B-ORG O B-PER
+John lives John New works Apple York New New in Apple,B-LOC O B-ORG O B-LOC
+Apple in Apple at works in at and,O B-ORG O I-LOC B-PER O O O
+New and and John lives New John the York,O B-ORG O O B-PER B-PER I-LOC O O O B-LOC O O
+Apple John lives the York Google in New,O B-ORG B-PER B-ORG O O O B-LOC O O O B-ORG B-ORG B-ORG
+works works in New Apple the in works,O O O O O O O O B-ORG
+and York the York works,B-ORG O B-LOC B-PER B-PER
+the in New Google and Google lives the the and,O I-LOC O B-ORG B-ORG O O O O
+John Google York Google York Apple Apple lives the John,O B-PER O B-PER O O I-LOC O B-ORG B-ORG B-PER O O
+at New Google and and Google and the Apple the John Google at at,O O O O O B-ORG B-ORG B-ORG O B-ORG O
+and York John the in John in Apple Google and John New,O B-ORG O O O B-PER B-LOC O O
+York and works Google New John at works Google works New lives,O B-ORG B-LOC I-LOC O O
+New the Google Google Google at John at lives in,O B-PER B-PER O O
+Apple Apple lives John Apple at works York in York Apple New in,B-ORG B-ORG O O O B-ORG B-ORG O O I-LOC O O I-LOC
+John lives the works John Google at John lives Apple New York at,O B-ORG O O O O I-LOC B-LOC O B-ORG
+and Apple New John in works and works,B-PER B-LOC O O B-ORG B-ORG O B-ORG O O B-ORG B-ORG I-LOC
+at in the and Google and New Google and works John New,O I-LOC O O O O O B-ORG B-PER O B-LOC O I-LOC
+York at works works York at Google lives lives Apple Google in in York,O I-LOC I-LOC O B-ORG B-ORG B-ORG O O I-LOC
+works Apple New Apple York John York John the at Apple,O O B-LOC O B-LOC O B-LOC
+lives the and in lives lives John Google Google John the,O B-LOC B-ORG B-ORG O O O O
+and lives lives New the Google Apple the the lives,B-ORG O O O B-LOC B-LOC B-PER B-ORG B-PER O B-ORG
+York York Apple in John Apple at Apple New lives and,B-ORG B-LOC O O O O I-LOC B-ORG B-LOC O O
+and John in York New works New at and lives and Google Google,O B-ORG I-LOC I-LOC B-PER O I-LOC O O
+at works Apple York York York Apple,O B-LOC O O B-ORG O
+at works Google John New,O B-PER O O B-PER B-PER B-ORG O O O O O B-PER
+John John lives in York at the Apple Apple in,B-PER O O I-LOC B-LOC B-PER B-PER
+in in Apple in in York in and in at Apple works John Google,B-ORG I-LOC O O B-LOC O O B-ORG O O O O
+at at the at works works New Google works,O O O B-PER I-LOC B-PER
+works and John Apple Google works John York and lives,O O I-LOC B-PER O O B-PER B-PER O B-LOC O
+lives John Apple at York works at lives,O I-LOC O O B-PER I-LOC I-LOC O B-ORG B-ORG
+and York works Google New the John Apple and works John,B-PER I-LOC O B-ORG B-ORG O B-ORG O I-LOC B-ORG
+York in in New in John in York at Apple Google lives at at,O O O O O O B-ORG B-PER B-ORG O O B-PER B-ORG
+at New lives Google and Apple John York the John lives York,O O O O B-ORG
+York York Google in in York John New York New,O B-ORG O O O B-LOC B-PER O B-LOC
+in in Apple Google and York at Apple lives Google and John York John,O B-ORG O B-LOC B-LOC O O I-LOC I-LOC B-ORG
+New Apple New the York New lives the Google lives,O O I-LOC I-LOC O I-LOC O B-ORG B-PER
+at Apple the and works the at New John Google,O O B-ORG O B-ORG B-ORG O O B-ORG O B-PER O O
+Apple the Google lives New lives and and the York works Google works in,B-PER B-LOC B-ORG B-ORG B-LOC O B-PER I-LOC
+the Google works at New New Apple Apple Google lives John,O O B-PER O I-LOC O B-PER B-PER O B-LOC O
+in at Apple and John works at works Google York and at and,B-PER O O B-PER O O O O B-ORG B-ORG B-LOC B-ORG
+at in Google Google Apple lives Google works York New York,O O O O B-ORG I-LOC I-LOC
+lives York New Apple the,B-LOC B-ORG O O B-ORG O B-PER O I-LOC B-ORG O B-ORG
+lives works lives in and in and and Google Google lives,O B-ORG B-ORG O B-ORG B-PER O O B-LOC
+at the in works in York the lives in York New lives at,O O B-LOC O O B-LOC B-ORG O O B-ORG O
+New in Apple lives in and in the works at works the,O I-LOC B-ORG B-ORG O B-ORG O B-ORG I-LOC O I-LOC
+York John the John the New in John in John York lives,B-PER O O B-LOC B-ORG B-ORG I-LOC B-PER B-LOC I-LOC B-LOC O
+York Google John at in New and Google at,B-ORG B-ORG O O O I-LOC
+at the John works in Google New in and,B-LOC I-LOC B-ORG O B-ORG O B-LOC B-LOC B-PER B-ORG O B-PER I-LOC
+John works Google in the lives New lives John works works,O B-LOC I-LOC B-PER B-ORG B-ORG B-ORG B-LOC B-LOC
+John in and Google York the lives at and lives lives in lives in,I-LOC O O B-ORG B-ORG B-PER B-ORG B-PER
+the in in in York in lives York John in Apple York the lives,B-ORG O B-ORG O B-PER B-ORG I-LOC O O B-PER
+works lives in John Google Google New New New in,I-LOC B-ORG B-PER O O O O O O
+John works works at lives works,B-LOC O B-ORG B-LOC O I-LOC
+Google York in New New York New Apple works John,O O B-PER O B-LOC B-LOC O B-PER O B-ORG
+Apple New and Google Apple Google John and Apple,O O I-LOC O B-LOC O B-ORG B-ORG O I-LOC B-LOC
+New York at John in Apple in at,B-PER O O I-LOC O B-ORG
+the at John Google the works the and Google Apple in,O B-ORG B-PER I-LOC B-ORG B-ORG B-ORG O B-PER O
+in New lives lives Apple lives New Apple at John in the the,O O O B-ORG B-ORG O B-ORG B-PER B-ORG B-ORG B-PER O O
+New in John Apple New New New,O O B-PER O O B-ORG B-ORG O
+York New John New and Apple and John in Apple Apple Apple lives,O O I-LOC I-LOC B-ORG O B-ORG O
+the Apple works John New at at New Google in York,O O B-ORG O O
+New Apple the New and Google in and the John the in,O O O B-ORG B-LOC
+works Google lives at Google lives New York,O O B-PER O B-LOC O B-ORG O B-PER O O
+New York and in lives lives John in the the York John John,O O O O O O B-ORG B-LOC B-ORG
+lives John York at the Apple,O O I-LOC O O O O O
+works John works at works New Google at lives,O B-LOC O O O O I-LOC O O
+Google John works lives York John John John works John York at works,B-ORG I-LOC B-ORG O O O B-ORG O B-ORG O
+York Apple New Apple in John works lives and and,O B-ORG B-ORG B-PER B-ORG
+works New and works York,B-ORG O B-PER O O O O O B-PER
+at lives lives the lives York Google at York lives John Google and and,O B-LOC O O O B-PER B-LOC O O O B-ORG O
+New at works Google and Apple at lives and,O B-ORG O B-PER O B-LOC I-LOC O B-LOC
+the lives New lives works York,B-ORG B-ORG O O O I-LOC O O B-PER O B-ORG B-LOC B-ORG
+in York works Apple John New the,O O B-LOC B-LOC I-LOC B-LOC O I-LOC O B-LOC B-ORG O I-LOC
+at lives Google lives New lives,O B-PER O B-PER I-LOC B-ORG O B-PER I-LOC I-LOC B-ORG O
+York John in works John New Apple and John,O O I-LOC B-PER O O O B-ORG B-ORG B-ORG O
+John the and lives works and York York New in,O O B-PER I-LOC B-PER O O O
+works Apple in Apple works New in lives New Google works,B-ORG O O O O B-ORG B-PER B-PER B-LOC O O O O
+Google lives lives the Google at works the the York lives New John,B-ORG B-PER B-PER O B-ORG I-LOC B-ORG B-ORG I-LOC O B-ORG
+York and Google works in,O O O O O
+in Google John Google and,O O O O B-PER B-ORG O O O I-LOC O O O B-LOC
+York at at John York York,B-ORG I-LOC O I-LOC B-PER O
+lives New in the lives John New,O B-PER O B-ORG O O B-LOC
+and and in and in Apple John the,O O O O O O O B-ORG B-ORG O O O O
+Google and and at Apple the New lives the and lives Google York York,O B-ORG O B-ORG B-ORG B-ORG O
+at the Apple in and at,O O O B-ORG B-PER O B-ORG B-PER
+works the and Google at,O O O B-ORG B-ORG B-PER O B-ORG O B-ORG O O O B-ORG
+lives in works works lives John New John York and at John,O O O O B-LOC
+and York and John New the New lives New in the York,O B-ORG O B-PER B-ORG I-LOC B-LOC
+works works in the Apple the in Google and lives,B-ORG O O O O B-ORG O O
+Google Google New and works John Apple,O O B-PER O O O O O
+York in John Apple York,O B-ORG B-ORG O O B-ORG O
+at John Apple York Google Apple and works,O B-ORG O O O O O B-LOC O B-ORG
+John and at works works John and works Apple Google the Google and,O B-PER O O O O B-LOC O B-PER B-ORG O
+works lives in Apple John York and New in New,B-PER O B-LOC O O B-ORG B-ORG O B-PER O I-LOC
+works in the lives John York New,B-ORG O B-LOC O B-ORG B-LOC O
+lives in in John the the lives,O B-ORG O O I-LOC B-PER I-LOC
+John New New Apple John New lives at and works the,I-LOC I-LOC B-ORG O B-ORG O O
+works at York works Google and in,O O B-ORG O B-LOC B-PER B-ORG O O I-LOC O O O I-LOC
+John in in Google Google New New,O B-ORG B-LOC B-PER I-LOC O O O O O B-ORG B-LOC B-ORG
+New at Google lives lives at York New,B-ORG O O B-ORG B-ORG O
+Apple Google works lives works the,B-ORG O B-PER O O O B-LOC B-ORG B-ORG O B-ORG B-PER
+and the John works and New at the lives,I-LOC O O O O
+at at lives lives and the and Google lives,B-ORG B-ORG O O I-LOC I-LOC O B-LOC O
+Google lives lives Apple in York and New York John,O O O O O O I-LOC B-PER B-PER B-ORG B-PER O O
+in in and York at,O B-ORG O B-LOC O O
+John Google Apple Google lives York New John in New Apple York York John,B-ORG B-ORG O O B-ORG O O B-LOC B-ORG O
+Google the the the the and at the and Google Google New the Google,O B-LOC B-PER B-ORG O
+John John John York the New and in New York,I-LOC O B-ORG O B-PER O O B-PER O O O
+York lives the works York lives,O O B-LOC B-PER B-LOC O I-LOC I-LOC O O O O B-LOC
+Apple lives in Google John works Apple lives works the John Apple Apple,O O B-PER O O O O I-LOC B-ORG O B-ORG O O
+and New Apple York and the,I-LOC O I-LOC O O B-PER B-PER
+the John John Google lives Google,B-ORG O O O B-LOC B-LOC B-ORG B-PER B-ORG B-LOC B-LOC O B-PER
+Apple and York the and Google lives the at,O O B-ORG O B-ORG O O O O O B-ORG O O O
+John John at York and in lives New lives,O O O O O O
+Apple the John the York Google at in lives the the Apple in the,O O O O O
+the the in Google the Google,O O O O B-ORG O
+New John New York Google Apple John in New in Google York lives,O B-PER B-PER I-LOC B-LOC O O O B-PER B-ORG O
+Google works and Google John the at New the lives Google,B-ORG O O I-LOC O O B-ORG B-ORG O
+in York works lives John and New lives in John in,O O O O O B-LOC
+New New Google lives the works the works,B-LOC O B-PER B-PER O O I-LOC O O
+New lives New lives and at John New lives,B-PER B-ORG O O O O B-ORG B-LOC B-LOC B-ORG O
+Apple lives at Google Apple lives New the,O I-LOC O B-ORG B-PER B-ORG O I-LOC B-PER I-LOC O O B-PER B-ORG
+in in New John in John the Apple Google and John John,O B-PER O O O O O O O O I-LOC I-LOC O O
+Apple in lives Apple Google in Apple York works,B-ORG O B-ORG B-ORG I-LOC B-PER B-PER O I-LOC B-ORG
+Google lives Apple Apple York at Google John,B-PER B-PER O O B-LOC O O O O O O I-LOC
+and the and lives lives John at Google at in,B-LOC B-PER O O O O B-PER B-ORG O B-PER O O B-PER
+the York in Apple Apple the York the the works,B-LOC B-PER I-LOC I-LOC B-LOC O B-ORG
+and John John lives Apple Google works works Google York John lives Google John,O B-ORG O B-LOC O O
+works New York works and York lives works New New,B-ORG B-LOC B-PER B-LOC O I-LOC O O O B-ORG B-ORG O O B-ORG
+Google New York New the York and works Google John,B-PER B-LOC O O O B-LOC O B-PER O O
+New Apple Apple John Google,B-ORG O O B-LOC B-PER O
+at John in and Apple works works at works New John New John,O B-ORG O B-ORG O
+at New York at in York in Apple,O B-PER B-LOC O B-LOC I-LOC O B-ORG B-PER O
+Apple New the Apple New and in lives at in New Google,O B-LOC O I-LOC I-LOC O O B-LOC B-ORG
+and Apple Google New at Apple New lives lives,B-PER B-ORG O I-LOC O B-ORG O O I-LOC O I-LOC B-LOC O B-ORG
+Google works New New New Google works works,O O O O B-ORG B-PER I-LOC B-LOC B-ORG O
+New in in New the,O O B-ORG O O B-ORG O O B-PER O
+lives Apple New in Google,O B-PER B-ORG O O
+and in New works York Apple works in Google York John and and works,O B-PER B-ORG O O I-LOC B-ORG B-ORG B-ORG O O B-ORG I-LOC
+Apple York in lives John John in New John John,O O O O B-PER O O I-LOC O O B-ORG O O
+Google and at York Google John,O O O O I-LOC B-ORG B-PER B-PER O O
+and the Google works Google Apple,O O O B-ORG B-ORG B-PER O O O B-LOC
+Apple and and York lives Google and in Google and Apple,O O O I-LOC B-ORG O O B-LOC B-LOC B-ORG B-ORG
+Apple John John and the in works,O O I-LOC B-LOC B-ORG I-LOC B-PER I-LOC O B-PER O
+Apple in Apple New Google,I-LOC I-LOC O O O O B-LOC O O O O O O
+York John New at the in Google works in in,O I-LOC B-LOC O O O O B-LOC
+York works York lives New in Google and the at Google York and,O O O O O O O B-ORG O B-PER O B-PER O O
+Google in in works and the lives at works the lives New,O O B-LOC O B-PER B-LOC B-PER B-PER B-PER B-PER I-LOC B-LOC
+and at and at New at and New New and works Apple lives the,O O O O B-ORG O I-LOC
